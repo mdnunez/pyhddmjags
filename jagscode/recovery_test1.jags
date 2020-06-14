@@ -1,0 +1,98 @@
+
+model {
+    
+    ##########
+    #Between-condition variability parameters priors
+    ##########
+
+    #Between-condition variability in drift rate to choice A
+    deltasdcond ~ dgamma(1,1)
+
+    ##########
+    #Between-participant variability parameters priors
+    ##########
+
+    #Between-participant variability in non-decision time
+    tersd ~ dgamma(.3,1)
+
+    #Between-participant variability in Speed-accuracy trade-off
+    alphasd ~ dgamma(1,1)
+
+    #Between-participant variability in choice A start point bias
+    betasd ~ dgamma(.3,1)
+
+    #Between-participant variability in lapse trial probability
+    problapsesd ~ dgamma(.3,1)
+
+    #Between-participant variability in drift rate to choice A
+    deltasd ~ dgamma(1,1)
+
+    ##########
+    #Hierarchical DDM parameter priors
+    ##########
+
+    #Hierarchical Non-decision time
+    terhier ~ dnorm(.5, pow(.25,-2))
+
+    #Hierarchical boundary parameter (speed-accuracy tradeoff)
+    alphahier ~ dnorm(1, pow(.5,-2))
+
+    #Hierarchical start point bias towards choice A
+    betahier ~ dnorm(.5, pow(.25,-2))
+
+    #Hierarchical lapse trial probability
+    problapsehier ~ dnorm(.3, pow(.15,-2))
+
+    #Hierarchical drift rate to choice A
+    deltahier ~ dnorm(0, pow(2, -2))
+
+    ##########
+    #Participant-level DDM parameter priors
+    ##########
+    for (p in 1:nparts) {
+
+        #Non-decision time
+        ter[p] ~ dnorm(terhier, pow(tersd,-2))T(0, 1)
+
+        #Boundary parameter (speed-accuracy tradeoff)
+        alpha[p] ~ dnorm(alphahier, pow(alphasd,-2))T(0, 3)
+
+        #Rightward start point bias towards choice A
+        beta[p] ~ dnorm(betahier, pow(betasd,-2))T(0, 1)
+
+        #Probability of a lapse trial
+        problapse[p] ~ dnorm(problapsehier, pow(problapsesd,-2))T(0, 1)
+        probDDM[p] <- 1 - problapse[p]
+
+        #Participant-level drift rate to choice A
+        deltapart[p] ~ dnorm(deltahier, pow(deltasd, -2))
+
+        for (c in 1:nconds) {
+
+            #Participant-level drift rate to choice A
+            delta[p,c] ~ dnorm(deltapart[p], pow(deltasdcond, -2))
+
+        }
+
+    }
+
+    ##########
+    # Wiener likelihood and uniform mixture using Ones trick
+    for (i in 1:N) {
+
+        # Log density for DDM process of rightward/leftward RT
+        ld_comp[i, 1] <- dlogwiener(y[i], alpha[participant[i]], ter[participant[i]], beta[participant[i]], delta[participant[i],condition[i]])
+
+        # Log density for lapse trials (negative max RT to positive max RT)
+        ld_comp[i, 2] <- logdensity.unif(y[i], -3, 3)
+
+        # Select one of these two densities (Mixture of nonlapse and lapse trials)
+        selected_density[i] <- exp(ld_comp[i, DDMorLapse[i]] - Constant)
+        
+        # Generate a likelihood for the MCMC sampler using a trick to maximize density value
+        Ones[i] ~ dbern(selected_density[i])
+
+        # Probability of mind wandering trials (lapse trials)
+        DDMorLapse[i] ~ dcat( c(probDDM[participant[i]], problapse[participant[i]]) )
+    }
+}
