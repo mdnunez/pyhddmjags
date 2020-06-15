@@ -657,21 +657,23 @@ trackvars = ['deltasdcond',
             'ter', 'alpha', 'beta', 'problapse', 'deltapart',
              'delta', 'DDMorLapse']
 
+N = np.squeeze(genparam['N'])
+nsims = np.squeeze(genparam['nsims'])
+
 # Input for mixture modeling
 Ones = np.ones(N)
 Constant = 20
 
-nsims = genparam['nsims']
+
 for n in range(0, nsims):
     #Fit model to data
     y = np.squeeze(genparam['y'][n,:])
     rt = np.squeeze(genparam['rt'][n,:])
     participant = np.squeeze(genparam['participant'][n,:])
     condition = np.squeeze(genparam['condition'][n,:])
-    N = genparam['N']
-    nparts = genparam['nparts']
-    nconds = genparam['nconds']
-    ntrials = genparam['ntrials']
+    nparts = np.squeeze(genparam['nparts'])
+    nconds = np.squeeze(genparam['nconds'])
+    ntrials = np.squeeze(genparam['ntrials'])
 
     minrt = np.zeros(nparts)
     for p in range(0,nparts):
