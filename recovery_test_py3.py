@@ -724,11 +724,11 @@ for n in range(0, nsims):
     plt.figure()
     jellyfish(samples['alpha'])
     plt.title('Posterior distributions of boundary parameter')
-    plt.savefig(('figures/alpha_posteriors_model%i.mat') % (n + 1), format='png',bbox_inches="tight")
+    plt.savefig(('figures/alpha_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
     #Recovery
     plt.figure()
     recovery(samples['alpha'][:],genparam['alpha'][n, :].T)
     plt.title('Recovery of boundary parameter')
-    plt.savefig(('figures/alpha_recovery_model%i.mat') % (n + 1), format='png',bbox_inches="tight")
+    plt.savefig(('figures/alpha_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
