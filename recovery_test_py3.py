@@ -22,6 +22,7 @@
 # 05/14/20      Michael Nunez                             Original code
 # 06/14/20      Michael Nunez                          Fixes and updates
 # 06/15/20      Michael Nunez                         Fix to beta simulation
+# 06/16/20      Michael Nunez                Generate new simulation data each time
 
 
 # Modules
@@ -453,80 +454,80 @@ def recovery(possamps, truevals):  # Parameter recovery plots
 
 # Generate samples from the joint-model of reaction time and choice
 
-if not os.path.exists('data/genparam_test1.mat'):
-    # Number of simulations
-    nsims = 1
+# if not os.path.exists('data/genparam_test1.mat'):
+# Number of simulations
+nsims = 1
 
-    # Number of simulated participants
-    nparts = 40
+# Number of simulated participants
+nparts = 40
 
-    # Number of conditions
-    nconds = 6
+# Number of conditions
+nconds = 6
 
-    # Number of trials per participant and condition
-    ntrials = 50
+# Number of trials per participant and condition
+ntrials = 50
 
-    # Number of total trials in each simulation
-    N = ntrials*nparts*nconds
+# Number of total trials in each simulation
+N = ntrials*nparts*nconds
 
-    # Set random seed
-    random.seed(2020)
+# Set random seed
+random.seed(2020)
 
-    ndt = np.random.uniform(.15, .6, size=(nsims, nparts)) # Uniform from .15 to .6 seconds
-    alpha = np.random.uniform(.8, 1.4, size=(nsims, nparts)) # Uniform from .8 to 1.4 evidence units
-    beta = np.random.uniform(.3, .7, size=(nsims, nparts)) # Uniform from .3 to .7 * alpha
-    delta = np.random.uniform(-4, 4, size=(nsims, nparts, nconds)) # Uniform from -4 to 4 evidence units per second
-    ndttrialrange = np.random.uniform(0,.1, size=(nsims,nparts)) # Uniform from 0 to .1 seconds
-    deltatrialsd = np.random.uniform(0, 2, size=(nsims,nparts)) # Uniform from 0 to 2 evidence units per second
-    prob_lapse = np.random.uniform(0, 10, size=(nsims,nparts)) # From 0 to 10 percent of trials
-    y = np.zeros((nsims, N))
-    rt = np.zeros((nsims, N))
-    acc = np.zeros((nsims, N))
-    participant = np.zeros((nsims, N)) #Participant index
-    condition = np.zeros((nsims, N)) #Condition index
-    for n in range(nsims):
-        indextrack = np.arange(ntrials)
-        for p in range(nparts):
-            for k in range(nconds):
-                tempout = simulratcliff(N=ntrials, Alpha= alpha[n,p], Tau= ndt[n,p], Beta=beta[n,p], 
-                    Nu= delta[n,p,k], Eta= deltatrialsd[n,p], rangeTau=ndttrialrange[n,p])
-                tempx = np.sign(np.real(tempout))
-                tempt = np.abs(np.real(tempout))
-                mindwanderx = np.random.randint(low=0,high=2,size=ntrials)*2 -1
-                mindwandert = np.random.uniform(low=0,high=2,size=ntrials) # Randomly distributed from 0 to 2 seconds
+ndt = np.random.uniform(.15, .6, size=(nsims, nparts)) # Uniform from .15 to .6 seconds
+alpha = np.random.uniform(.8, 1.4, size=(nsims, nparts)) # Uniform from .8 to 1.4 evidence units
+beta = np.random.uniform(.3, .7, size=(nsims, nparts)) # Uniform from .3 to .7 * alpha
+delta = np.random.uniform(-4, 4, size=(nsims, nparts, nconds)) # Uniform from -4 to 4 evidence units per second
+ndttrialrange = np.random.uniform(0,.1, size=(nsims,nparts)) # Uniform from 0 to .1 seconds
+deltatrialsd = np.random.uniform(0, 2, size=(nsims,nparts)) # Uniform from 0 to 2 evidence units per second
+prob_lapse = np.random.uniform(0, 10, size=(nsims,nparts)) # From 0 to 10 percent of trials
+y = np.zeros((nsims, N))
+rt = np.zeros((nsims, N))
+acc = np.zeros((nsims, N))
+participant = np.zeros((nsims, N)) #Participant index
+condition = np.zeros((nsims, N)) #Condition index
+for n in range(nsims):
+    indextrack = np.arange(ntrials)
+    for p in range(nparts):
+        for k in range(nconds):
+            tempout = simulratcliff(N=ntrials, Alpha= alpha[n,p], Tau= ndt[n,p], Beta=beta[n,p], 
+                Nu= delta[n,p,k], Eta= deltatrialsd[n,p], rangeTau=ndttrialrange[n,p])
+            tempx = np.sign(np.real(tempout))
+            tempt = np.abs(np.real(tempout))
+            mindwanderx = np.random.randint(low=0,high=2,size=ntrials)*2 -1
+            mindwandert = np.random.uniform(low=0,high=2,size=ntrials) # Randomly distributed from 0 to 2 seconds
 
-                mindwander_trials = np.random.choice(ntrials, size=np.int(np.round(ntrials*(prob_lapse[n,p]/100))), replace=False)
-                tempx[mindwander_trials] = mindwanderx[mindwander_trials]
-                tempt[mindwander_trials] = mindwandert[mindwander_trials]
-                y[n,indextrack] = tempx*tempt
-                rt[n,indextrack] = tempt
-                acc[n,indextrack] = (tempx + 1)/2
-                participant[n,indextrack] = p+1
-                condition[n,indextrack] = k+1
-                indextrack += ntrials
+            mindwander_trials = np.random.choice(ntrials, size=np.int(np.round(ntrials*(prob_lapse[n,p]/100))), replace=False)
+            tempx[mindwander_trials] = mindwanderx[mindwander_trials]
+            tempt[mindwander_trials] = mindwandert[mindwander_trials]
+            y[n,indextrack] = tempx*tempt
+            rt[n,indextrack] = tempt
+            acc[n,indextrack] = (tempx + 1)/2
+            participant[n,indextrack] = p+1
+            condition[n,indextrack] = k+1
+            indextrack += ntrials
 
 
-    genparam = dict()
-    genparam['ndt'] = ndt
-    genparam['beta'] = beta
-    genparam['alpha'] = alpha
-    genparam['delta'] = delta
-    genparam['ndttrialrange'] = ndttrialrange
-    genparam['deltatrialsd'] = deltatrialsd
-    genparam['prob_lapse'] = prob_lapse
-    genparam['rt'] = rt
-    genparam['acc'] = acc
-    genparam['y'] = y
-    genparam['participant'] = participant
-    genparam['condition'] = condition
-    genparam['nsims'] = nsims
-    genparam['nparts'] = nparts
-    genparam['nconds'] = nconds
-    genparam['ntrials'] = ntrials
-    genparam['N'] = N
-    sio.savemat('data/genparam_test1.mat', genparam)
-else:
-    genparam = sio.loadmat('data/genparam_test1.mat')
+genparam = dict()
+genparam['ndt'] = ndt
+genparam['beta'] = beta
+genparam['alpha'] = alpha
+genparam['delta'] = delta
+genparam['ndttrialrange'] = ndttrialrange
+genparam['deltatrialsd'] = deltatrialsd
+genparam['prob_lapse'] = prob_lapse
+genparam['rt'] = rt
+genparam['acc'] = acc
+genparam['y'] = y
+genparam['participant'] = participant
+genparam['condition'] = condition
+genparam['nsims'] = nsims
+genparam['nparts'] = nparts
+genparam['nconds'] = nconds
+genparam['ntrials'] = ntrials
+genparam['N'] = N
+sio.savemat('data/genparam_test1.mat', genparam)
+# else:
+#     genparam = sio.loadmat('data/genparam_test1.mat')
 
 # JAGS code
 
