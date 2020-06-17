@@ -23,6 +23,7 @@
 # 06/14/20      Michael Nunez                          Fixes and updates
 # 06/15/20      Michael Nunez                         Fix to beta simulation
 # 06/16/20      Michael Nunez                Generate new simulation data each time
+# 06/17/20      Michael Nunez                       Fixes to recovery plots
 
 
 # Modules
@@ -722,45 +723,45 @@ for n in range(0, nsims):
     samples_diagrelevant.pop('DDMorLapse', None) #Remove variable DDMorLapse to obtain Rhat diagnostics
     diags = diagnostic(samples_diagrelevant)
 
-    #Posterior distributions
-    plt.figure()
-    jellyfish(samples['delta'])
-    plt.title('Posterior distributions of the drift-rate')
-    plt.savefig(('figures/delta_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+#Posterior distributions
+plt.figure()
+jellyfish(samples['delta'])
+plt.title('Posterior distributions of the drift-rate')
+plt.savefig(('figures/delta_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
-    plt.figure()
-    jellyfish(samples['ter'])
-    plt.title('Posterior distributions of the non-decision time parameter')
-    plt.savefig(('figures/ter_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.figure()
+jellyfish(samples['ter'])
+plt.title('Posterior distributions of the non-decision time parameter')
+plt.savefig(('figures/ter_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
-    plt.figure()
-    jellyfish(samples['beta'])
-    plt.title('Posterior distributions of the start point parameter')
-    plt.savefig(('figures/beta_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.figure()
+jellyfish(samples['beta'])
+plt.title('Posterior distributions of the start point parameter')
+plt.savefig(('figures/beta_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
-    plt.figure()
-    jellyfish(samples['alpha'])
-    plt.title('Posterior distributions of boundary parameter')
-    plt.savefig(('figures/alpha_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.figure()
+jellyfish(samples['alpha'])
+plt.title('Posterior distributions of boundary parameter')
+plt.savefig(('figures/alpha_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
-    #Recovery
-    plt.figure()
-    recovery(samples['delta'].flatten(),genparam['delta'][n, :, :].T.flatten())
-    plt.title('Recovery of the drift-rate')
-    plt.savefig(('figures/delta_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+#Recovery
+plt.figure()
+recovery(samples['delta'],genparam['delta'][n, :, :])
+plt.title('Recovery of the drift-rate')
+plt.savefig(('figures/delta_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
-    plt.figure()
-    recovery(samples['ter'][:],genparam['ter'][n, :].T)
-    plt.title('Recovery of the non-decision time parameter')
-    plt.savefig(('figures/ter_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.figure()
+recovery(samples['ter'][:],genparam['ndt'][n, :].T)
+plt.title('Recovery of the non-decision time parameter')
+plt.savefig(('figures/ter_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
-    plt.figure()
-    recovery(samples['beta'][:],genparam['beta'][n, :].T)
-    plt.title('Recovery of the start point parameter')
-    plt.savefig(('figures/beta_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.figure()
+recovery(samples['beta'][:],genparam['beta'][n, :].T)
+plt.title('Recovery of the start point parameter')
+plt.savefig(('figures/beta_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
-    plt.figure()
-    recovery(samples['alpha'][:],genparam['alpha'][n, :].T)
-    plt.title('Recovery of boundary parameter')
-    plt.savefig(('figures/alpha_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.figure()
+recovery(samples['alpha'][:],genparam['alpha'][n, :].T)
+plt.title('Recovery of boundary parameter')
+plt.savefig(('figures/alpha_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
 
