@@ -1,5 +1,5 @@
 # pyhddmjags
-#### (Repository version 0.1.6)
+#### (Repository version 0.1.7)
 Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS in Python
 
 **Authors: Michael D. Nunez from the Cognitive Sciences Department at the University of California, Irvine**

@@ -24,6 +24,7 @@
 # 06/15/20      Michael Nunez                         Fix to beta simulation
 # 06/16/20      Michael Nunez                Generate new simulation data each time
 # 06/17/20      Michael Nunez                       Fixes to recovery plots
+# 06/18/20      Michael Nunez    Generate only one simulation and remove simulation index
 
 
 # Modules
@@ -456,8 +457,6 @@ def recovery(possamps, truevals):  # Parameter recovery plots
 # Generate samples from the joint-model of reaction time and choice
 
 # if not os.path.exists('data/genparam_test1.mat'):
-# Number of simulations
-nsims = 1
 
 # Number of simulated participants
 nparts = 40
@@ -474,38 +473,37 @@ N = ntrials*nparts*nconds
 # Set random seed
 random.seed(2020)
 
-ndt = np.random.uniform(.15, .6, size=(nsims, nparts)) # Uniform from .15 to .6 seconds
-alpha = np.random.uniform(.8, 1.4, size=(nsims, nparts)) # Uniform from .8 to 1.4 evidence units
-beta = np.random.uniform(.3, .7, size=(nsims, nparts)) # Uniform from .3 to .7 * alpha
-delta = np.random.uniform(-4, 4, size=(nsims, nparts, nconds)) # Uniform from -4 to 4 evidence units per second
-ndttrialrange = np.random.uniform(0,.1, size=(nsims,nparts)) # Uniform from 0 to .1 seconds
-deltatrialsd = np.random.uniform(0, 2, size=(nsims,nparts)) # Uniform from 0 to 2 evidence units per second
-prob_lapse = np.random.uniform(0, 10, size=(nsims,nparts)) # From 0 to 10 percent of trials
-y = np.zeros((nsims, N))
-rt = np.zeros((nsims, N))
-acc = np.zeros((nsims, N))
-participant = np.zeros((nsims, N)) #Participant index
-condition = np.zeros((nsims, N)) #Condition index
-for n in range(nsims):
-    indextrack = np.arange(ntrials)
-    for p in range(nparts):
-        for k in range(nconds):
-            tempout = simulratcliff(N=ntrials, Alpha= alpha[n,p], Tau= ndt[n,p], Beta=beta[n,p], 
-                Nu= delta[n,p,k], Eta= deltatrialsd[n,p], rangeTau=ndttrialrange[n,p])
-            tempx = np.sign(np.real(tempout))
-            tempt = np.abs(np.real(tempout))
-            mindwanderx = np.random.randint(low=0,high=2,size=ntrials)*2 -1
-            mindwandert = np.random.uniform(low=0,high=2,size=ntrials) # Randomly distributed from 0 to 2 seconds
+ndt = np.random.uniform(.15, .6, size=(nparts)) # Uniform from .15 to .6 seconds
+alpha = np.random.uniform(.8, 1.4, size=(nparts)) # Uniform from .8 to 1.4 evidence units
+beta = np.random.uniform(.3, .7, size=(nparts)) # Uniform from .3 to .7 * alpha
+delta = np.random.uniform(-4, 4, size=(nparts, nconds)) # Uniform from -4 to 4 evidence units per second
+ndttrialrange = np.random.uniform(0,.1, size=(nparts)) # Uniform from 0 to .1 seconds
+deltatrialsd = np.random.uniform(0, 2, size=(nparts)) # Uniform from 0 to 2 evidence units per second
+prob_lapse = np.random.uniform(0, 10, size=(nparts)) # From 0 to 10 percent of trials
+y = np.zeros((N))
+rt = np.zeros((N))
+acc = np.zeros((N))
+participant = np.zeros((N)) #Participant index
+condition = np.zeros((N)) #Condition index
+indextrack = np.arange(ntrials)
+for p in range(nparts):
+    for k in range(nconds):
+        tempout = simulratcliff(N=ntrials, Alpha= alpha[p], Tau= ndt[p], Beta=beta[p], 
+            Nu= delta[p,k], Eta= deltatrialsd[p], rangeTau=ndttrialrange[p])
+        tempx = np.sign(np.real(tempout))
+        tempt = np.abs(np.real(tempout))
+        mindwanderx = np.random.randint(low=0,high=2,size=ntrials)*2 -1
+        mindwandert = np.random.uniform(low=0,high=2,size=ntrials) # Randomly distributed from 0 to 2 seconds
 
-            mindwander_trials = np.random.choice(ntrials, size=np.int(np.round(ntrials*(prob_lapse[n,p]/100))), replace=False)
-            tempx[mindwander_trials] = mindwanderx[mindwander_trials]
-            tempt[mindwander_trials] = mindwandert[mindwander_trials]
-            y[n,indextrack] = tempx*tempt
-            rt[n,indextrack] = tempt
-            acc[n,indextrack] = (tempx + 1)/2
-            participant[n,indextrack] = p+1
-            condition[n,indextrack] = k+1
-            indextrack += ntrials
+        mindwander_trials = np.random.choice(ntrials, size=np.int(np.round(ntrials*(prob_lapse[p]/100))), replace=False)
+        tempx[mindwander_trials] = mindwanderx[mindwander_trials]
+        tempt[mindwander_trials] = mindwandert[mindwander_trials]
+        y[indextrack] = tempx*tempt
+        rt[indextrack] = tempt
+        acc[indextrack] = (tempx + 1)/2
+        participant[indextrack] = p+1
+        condition[indextrack] = k+1
+        indextrack += ntrials
 
 
 genparam = dict()
@@ -521,7 +519,6 @@ genparam['acc'] = acc
 genparam['y'] = y
 genparam['participant'] = participant
 genparam['condition'] = condition
-genparam['nsims'] = nsims
 genparam['nparts'] = nparts
 genparam['nconds'] = nconds
 genparam['ntrials'] = ntrials
@@ -661,107 +658,105 @@ trackvars = ['deltasdcond',
              'delta', 'DDMorLapse']
 
 N = np.squeeze(genparam['N'])
-nsims = np.squeeze(genparam['nsims'])
 
 # Input for mixture modeling
 Ones = np.ones(N)
 Constant = 20
 
 
-for n in range(0, nsims):
-    #Fit model to data
-    y = np.squeeze(genparam['y'][n,:])
-    rt = np.squeeze(genparam['rt'][n,:])
-    participant = np.squeeze(genparam['participant'][n,:])
-    condition = np.squeeze(genparam['condition'][n,:])
-    nparts = np.squeeze(genparam['nparts'])
-    nconds = np.squeeze(genparam['nconds'])
-    ntrials = np.squeeze(genparam['ntrials'])
+#Fit model to data
+y = np.squeeze(genparam['y'])
+rt = np.squeeze(genparam['rt'])
+participant = np.squeeze(genparam['participant'])
+condition = np.squeeze(genparam['condition'])
+nparts = np.squeeze(genparam['nparts'])
+nconds = np.squeeze(genparam['nconds'])
+ntrials = np.squeeze(genparam['ntrials'])
 
-    minrt = np.zeros(nparts)
-    for p in range(0,nparts):
-        minrt[p] = np.min(rt[(participant == (p+1))])
+minrt = np.zeros(nparts)
+for p in range(0,nparts):
+    minrt[p] = np.min(rt[(participant == (p+1))])
 
-    initials = []
-    for c in range(0, nchains):
-        chaininit = {
-            'deltasdcond': np.random.uniform(.1, 3.),
-            'tersd': np.random.uniform(.01, .2),
-            'alphasd': np.random.uniform(.01, 1.),
-            'betasd': np.random.uniform(.01, .2),
-            'problapsesd': np.random.uniform(.01, .5),
-            'deltasd': np.random.uniform(.1, 3.),
-            'deltapart': np.random.uniform(-4., 4., size=nparts),
-            'delta': np.random.uniform(-4., 4., size=(nparts,nconds)),
-            'ter': np.random.uniform(.1, .5, size=nparts),
-            'alpha': np.random.uniform(.5, 2., size=nparts),
-            'beta': np.random.uniform(.2, .8, size=nparts),
-            'problapse': np.random.uniform(.01, .1, size=nparts),
-            'deltahier': np.random.uniform(-4., 4.),
-            'terhier': np.random.uniform(.1, .5),
-            'alphahier': np.random.uniform(.5, 2.),
-            'betahier': np.random.uniform(.2, .8),
-            'problapsehier': np.random.uniform(.01, .1)
-        }
-        for p in range(0, nparts):
-            chaininit['ter'][p] = np.random.uniform(0., minrt[p]/2)
-        initials.append(chaininit)
-    print('Fitting model %i ...' % n)
-    threaded = pyjags.Model(file=modelfile, init=initials,
-                            data=dict(y=y, N=N, nparts=nparts, nconds=nconds, condition=condition,
-                                      participant=participant, Ones=Ones, Constant=Constant),
-                            chains=nchains, adapt=burnin, threads=6,
-                            progress_bar=True)
-    samples = threaded.sample(nsamps, vars=trackvars, thin=10)
-    savestring = ('modelfits/genparam_test1_model%i.mat') % (n + 1)
-    print('Saving results to: \n %s' % savestring)
-    sio.savemat(savestring, samples)
+initials = []
+for c in range(0, nchains):
+    chaininit = {
+        'deltasdcond': np.random.uniform(.1, 3.),
+        'tersd': np.random.uniform(.01, .2),
+        'alphasd': np.random.uniform(.01, 1.),
+        'betasd': np.random.uniform(.01, .2),
+        'problapsesd': np.random.uniform(.01, .5),
+        'deltasd': np.random.uniform(.1, 3.),
+        'deltapart': np.random.uniform(-4., 4., size=nparts),
+        'delta': np.random.uniform(-4., 4., size=(nparts,nconds)),
+        'ter': np.random.uniform(.1, .5, size=nparts),
+        'alpha': np.random.uniform(.5, 2., size=nparts),
+        'beta': np.random.uniform(.2, .8, size=nparts),
+        'problapse': np.random.uniform(.01, .1, size=nparts),
+        'deltahier': np.random.uniform(-4., 4.),
+        'terhier': np.random.uniform(.1, .5),
+        'alphahier': np.random.uniform(.5, 2.),
+        'betahier': np.random.uniform(.2, .8),
+        'problapsehier': np.random.uniform(.01, .1)
+    }
+    for p in range(0, nparts):
+        chaininit['ter'][p] = np.random.uniform(0., minrt[p]/2)
+    initials.append(chaininit)
+print('Fitting model 1 ...')
+threaded = pyjags.Model(file=modelfile, init=initials,
+                        data=dict(y=y, N=N, nparts=nparts, nconds=nconds, condition=condition,
+                                  participant=participant, Ones=Ones, Constant=Constant),
+                        chains=nchains, adapt=burnin, threads=6,
+                        progress_bar=True)
+samples = threaded.sample(nsamps, vars=trackvars, thin=10)
+savestring = ('modelfits/genparam_test1_model1.mat')
+print('Saving results to: \n %s' % savestring)
+sio.savemat(savestring, samples)
 
-    #Diagnostics
-    samples = sio.loadmat(savestring)
-    samples_diagrelevant = samples.copy()
-    samples_diagrelevant.pop('DDMorLapse', None) #Remove variable DDMorLapse to obtain Rhat diagnostics
-    diags = diagnostic(samples_diagrelevant)
+#Diagnostics
+samples = sio.loadmat(savestring)
+samples_diagrelevant = samples.copy()
+samples_diagrelevant.pop('DDMorLapse', None) #Remove variable DDMorLapse to obtain Rhat diagnostics
+diags = diagnostic(samples_diagrelevant)
 
 #Posterior distributions
 plt.figure()
 jellyfish(samples['delta'])
 plt.title('Posterior distributions of the drift-rate')
-plt.savefig(('figures/delta_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.savefig(('figures/delta_posteriors_model1.png'), format='png',bbox_inches="tight")
 
 plt.figure()
 jellyfish(samples['ter'])
 plt.title('Posterior distributions of the non-decision time parameter')
-plt.savefig(('figures/ter_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.savefig(('figures/ter_posteriors_model1.png'), format='png',bbox_inches="tight")
 
 plt.figure()
 jellyfish(samples['beta'])
 plt.title('Posterior distributions of the start point parameter')
-plt.savefig(('figures/beta_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.savefig(('figures/beta_posteriors_model1.png'), format='png',bbox_inches="tight")
 
 plt.figure()
 jellyfish(samples['alpha'])
 plt.title('Posterior distributions of boundary parameter')
-plt.savefig(('figures/alpha_posteriors_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.savefig(('figures/alpha_posteriors_model1.png'), format='png',bbox_inches="tight")
 
 #Recovery
 plt.figure()
-recovery(samples['delta'],genparam['delta'][n, :, :])
+recovery(samples['delta'],genparam['delta'][:, :])
 plt.title('Recovery of the drift-rate')
-plt.savefig(('figures/delta_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.savefig(('figures/delta_recovery_model1.png'), format='png',bbox_inches="tight")
 
 plt.figure()
-recovery(samples['ter'][:],genparam['ndt'][n, :].T)
+recovery(samples['ter'],genparam['ndt'])
 plt.title('Recovery of the non-decision time parameter')
-plt.savefig(('figures/ter_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.savefig(('figures/ter_recovery_model1.png'), format='png',bbox_inches="tight")
 
 plt.figure()
-recovery(samples['beta'][:],genparam['beta'][n, :].T)
+recovery(samples['beta'],genparam['beta'])
 plt.title('Recovery of the start point parameter')
-plt.savefig(('figures/beta_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.savefig(('figures/beta_recovery_model1.png'), format='png',bbox_inches="tight")
 
 plt.figure()
-recovery(samples['alpha'][:],genparam['alpha'][n, :].T)
+recovery(samples['alpha'],genparam['alpha'])
 plt.title('Recovery of boundary parameter')
-plt.savefig(('figures/alpha_recovery_model%i.png') % (n + 1), format='png',bbox_inches="tight")
+plt.savefig(('figures/alpha_recovery_model1.png'), format='png',bbox_inches="tight")
 
