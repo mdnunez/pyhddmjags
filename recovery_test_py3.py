@@ -1,4 +1,4 @@
-# recovery_test.py - Testing JAGS fits of HDDM models in JAGS using pyjags in Python 3
+# recovery_test_py3.py - Testing JAGS fits of HDDM models in JAGS using pyjags in Python 3
 #
 # Copyright (C) 2020 Michael D. Nunez, <mdnunez1@uci.edu>
 #
