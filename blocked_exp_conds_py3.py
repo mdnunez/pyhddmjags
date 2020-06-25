@@ -20,6 +20,7 @@
 # Date            Programmers                         Descriptions of Change
 # ====         ================                       ======================
 # 06/24/20      Michael Nunez                             Original code
+# 06/25/20      Michael NUnez                     Removal of false plots
 
 
 # Modules
@@ -471,11 +472,6 @@ plt.figure()
 jellyfish(samples['ter'])
 plt.title('Posterior distributions of the non-decision time parameter')
 plt.savefig(('figures/ter_posteriors_model2.png'), format='png',bbox_inches="tight")
-
-plt.figure()
-jellyfish(samples['beta'])
-plt.title('Posterior distributions of the start point parameter')
-plt.savefig(('figures/beta_posteriors_model2.png'), format='png',bbox_inches="tight")
 
 plt.figure()
 jellyfish(samples['alpha'])
