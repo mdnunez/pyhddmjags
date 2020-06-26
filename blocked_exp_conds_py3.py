@@ -20,7 +20,7 @@
 # Date            Programmers                         Descriptions of Change
 # ====         ================                       ======================
 # 06/24/20      Michael Nunez                             Original code
-# 06/25/20      Michael NUnez                     Removal of false plots
+# 06/25/20      Michael NUnez             Removal of false plots, reduce problapse parameters
 
 
 # Modules
@@ -298,9 +298,6 @@ model {
     #Between-condition variability in speed-accuracy trade-off
     alphasdcond ~ dgamma(1,1)
 
-    #Between-condition variability in lapse trial probability
-    problapsesdcond ~ dgamma(.3,1)
-
     ##########
     #Between-participant variability priors
     ##########
@@ -347,8 +344,9 @@ model {
         #Participant-level boundary parameter (speed-accuracy tradeoff)
         alphapart[p] ~ dnorm(alphahier, pow(alphasd,-2))
 
-        #Participant-level probability of a lapse trial
-        problapsepart[p] ~ dnorm(problapsehier, pow(problapsesd,-2))
+        #Probability of a lapse trial
+        problapse[p] ~ dnorm(problapsehier, pow(problapsesd,-2))T(0, 1)
+        probDDM[p] <- 1 - problapse[p]
 
         for (c in 1:nconds) {
 
@@ -360,10 +358,6 @@ model {
 
             #Boundary parameter (speed-accuracy tradeoff)
             alpha[p,c] ~ dnorm(alphapart[p], pow(alphasdcond,-2))T(0, 3)
-
-            #Probability of a lapse trial
-            problapse[p,c] ~ dnorm(problapsepart[p], pow(problapsesdcond,-2))T(0, 1)
-            probDDM[p,c] <- 1 - problapse[p,c]
 
         }
 
@@ -386,7 +380,7 @@ model {
         Ones[i] ~ dbern(selected_density[i])
 
         # Probability of mind wandering trials (lapse trials)
-        DDMorLapse[i] ~ dcat( c(probDDM[participant[i],condition[i]], problapse[participant[i],condition[i]]) )
+        DDMorLapse[i] ~ dcat( c(probDDM[participant[i]], problapse[participant[i]]) )
     }
 }
 '''
@@ -410,10 +404,10 @@ f.write(tojags)
 f.close()
 
 # Track these variables
-trackvars = ['deltasdcond', 'tersdcond', 'alphasdcond', 'problapsesdcond', 
+trackvars = ['deltasdcond', 'tersdcond', 'alphasdcond',
             'deltasd', 'tersd', 'alphasd', 'problapsesd',
             'deltahier', 'terhier', 'alphahier', 'problapsehier',
-            'deltapart', 'terpart', 'alphapart', 'problapsepart',
+            'deltapart', 'terpart', 'alphapart',
              'delta', 'ter', 'alpha', 'problapse', 'DDMorLapse']
 
 
@@ -423,7 +417,6 @@ for c in range(0, nchains):
         'deltasdcond': np.random.uniform(.1, 3.),
         'tersdcond': np.random.uniform(.01, .2),
         'alphasdcond': np.random.uniform(.01, 1.),
-        'problapsesdcond': np.random.uniform(.01, .5),
         'deltasd': np.random.uniform(.1, 3.),
         'tersd': np.random.uniform(.01, .2),
         'alphasd': np.random.uniform(.01, 1.),
@@ -435,11 +428,10 @@ for c in range(0, nchains):
         'deltapart': np.random.uniform(-4., 4., size=nparts),
         'terpart': np.random.uniform(.1, .5, size=nparts),
         'alphapart': np.random.uniform(.5, 2., size=nparts),
-        'problapsepart': np.random.uniform(.01, .1, size=nparts),
+        'problapse': np.random.uniform(.01, .1, size=nparts),
         'delta': np.random.uniform(-4., 4., size=(nparts,nconds)),
         'ter': np.random.uniform(.1, .5, size=(nparts,nconds)),
-        'alpha': np.random.uniform(.5, 2., size=(nparts,nconds)),
-        'problapse': np.random.uniform(.01, .1, size=(nparts,nconds))
+        'alpha': np.random.uniform(.5, 2., size=(nparts,nconds))
     }
     for p in range(0, nparts):
         for c in range(0, nconds):
