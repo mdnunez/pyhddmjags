@@ -674,8 +674,8 @@ pyjags.modules.load_module('dic')
 pyjags.modules.list_modules()
 
 nchains = 6
-burnin = 2000  # Note that scientific notation breaks pyjags
-nsamps = 10000
+burnin = 4000  # Note that scientific notation breaks pyjags
+nsamps = 20000
 
 modelfile = 'jagscode/regression_test3.jags'
 f = open(modelfile, 'w')
@@ -762,17 +762,17 @@ plt.title('Recovery of boundary parameter')
 plt.savefig(('figures/alpha_recovery_model3.png'), format='png',bbox_inches="tight")
 
 plt.figure()
-recovery(samples['delta_int'],genparam['delta_int'])
+recovery(samples['delta_int'],genparam['delta_int'][0,:])
 plt.title('Recovery of the drift-rate intercept')
 plt.savefig(('figures/delta_int_recovery_model3.png'), format='png',bbox_inches="tight")
 
 plt.figure()
-recovery(samples['ndt_int'],genparam['ndt_int'])
+recovery(samples['ndt_int'],genparam['ndt_int'][0,:])
 plt.title('Recovery of the non-decision time intercept')
 plt.savefig(('figures/ndt_int_recovery_model3.png'), format='png',bbox_inches="tight")
 
 plt.figure()
-recovery(samples['alpha_int'],genparam['alpha_int'])
+recovery(samples['alpha_int'],genparam['alpha_int'][0,:])
 plt.title('Recovery of boundary parameter intercept')
 plt.savefig(('figures/alpha_int_recovery_model3.png'), format='png',bbox_inches="tight")
 
