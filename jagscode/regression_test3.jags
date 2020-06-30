@@ -1,0 +1,102 @@
+
+model {
+    
+    ##########
+    #Between-condition variability priors
+    ##########
+
+    #Between-condition variability in drift rate to correct
+    deltasdcond ~ dgamma(1,1)
+
+    #Between-condition variability in non-decision time
+    ndtsdcond ~ dgamma(.3,1)
+
+    #Between-condition variability in speed-accuracy trade-off
+    alphasdcond ~ dgamma(1,1)
+
+    ##########
+    #Between-participant variability priors
+    ##########
+
+    #Between-participant variability in lapse trial probability
+    problapsesd ~ dgamma(.3,1)
+
+    ##########
+    #Hierarchical DDM parameter priors
+    ##########
+
+    #Hierarchical lapse trial probability
+    problapsehier ~ dnorm(.3, pow(.15,-2))
+
+    ##########
+    #Condition-level DDM parameter priors
+    ##########
+
+    for (c in 1:nconds) {
+
+        #Drift rate intercept
+        delta_int[c] ~ dnorm(0, pow(6, -2))
+
+        #Non-decision time intercept
+        ndt_int[c] ~ dnorm(0, pow(2,-2))
+
+        #Boundary parameter intercept
+        alpha_int[c] ~ dnorm(0, pow(4,-2))
+
+        #Effect of regressor1 on Drift rate 
+        delta_gamma[c] ~ dnorm(0, pow(3, -2))
+
+        #Effect of regressor1 on Non-decision time
+        ndt_gamma[c] ~ dnorm(0, pow(1,-2))
+
+        #Effect of regressor1 on boundary parameter
+        alpha_gamma[c] ~ dnorm(0, pow(2,-2))
+
+
+    }
+
+
+    ##########
+    #Participant-level DDM parameter priors
+    ##########
+    for (p in 1:nparts) {
+
+        #Probability of a lapse trial
+        problapse[p] ~ dnorm(problapsehier, pow(problapsesd,-2))T(0, 1)
+        probDDM[p] <- 1 - problapse[p]
+
+        for (c in 1:nconds) {
+
+            #Participant-level drift rate to correct
+            delta[p,c] ~ dnorm(delta_int[c] + delta_gamma[c]*regressors1[p,c], pow(deltasdcond, -2))
+
+            #Non-decision time
+            ndt[p,c] ~ dnorm(ndt_int[c] + ndt_gamma[c]*regressors1[p,c], pow(ndtsdcond,-2))T(0, 1)
+
+            #Boundary parameter (speed-accuracy tradeoff)
+            alpha[p,c] ~ dnorm(alpha_int[c] + alpha_gamma[c]*regressors1[p,c], pow(alphasdcond,-2))T(0, 3)
+
+        }
+
+    }
+
+    ##########
+    # Wiener likelihood and uniform mixture using Ones trick
+    for (i in 1:N) {
+
+        # Log density for DDM process of rightward/leftward RT
+        ld_comp[i, 1] <- dlogwiener(y[i], alpha[participant[i],condition[i]], ndt[participant[i],condition[i]], .5, delta[participant[i],condition[i]])
+
+        # Log density for lapse trials (negative max RT to positive max RT)
+        ld_comp[i, 2] <- logdensity.unif(y[i], -3, 3)
+
+        # Select one of these two densities (Mixture of nonlapse and lapse trials)
+        selected_density[i] <- exp(ld_comp[i, DDMorLapse[i]] - Constant)
+        
+        # Generate a likelihood for the MCMC sampler using a trick to maximize density value
+        Ones[i] ~ dbern(selected_density[i])
+
+        # Probability of mind wandering trials (lapse trials)
+        DDMorLapse[i] ~ dcat( c(probDDM[participant[i]], problapse[participant[i]]) )
+    }
+}

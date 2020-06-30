@@ -21,6 +21,7 @@
 # ====         ================                       ======================
 # 06/24/20      Michael Nunez                             Original code
 # 06/25/20      Michael NUnez             Removal of false plots, reduce problapse parameters
+# 06/29/20      Michael Nunez                 Save out jags code with fixed name
 
 
 # Modules
@@ -398,7 +399,7 @@ nchains = 6
 burnin = 2000  # Note that scientific notation breaks pyjags
 nsamps = 10000
 
-modelfile = 'jagscode/recovery_test1.jags'
+modelfile = 'jagscode/blocked_exp_conds.jags'
 f = open(modelfile, 'w')
 f.write(tojags)
 f.close()
