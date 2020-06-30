@@ -1,5 +1,5 @@
 # pyhddmjags
-#### (Repository version 0.2.0)
+#### (Repository version 0.2.1)
 Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS in Python
 
 **Authors: Michael D. Nunez from the Cognitive Sciences Department at the University of California, Irvine**
@@ -27,6 +27,6 @@ pyhddmjags is licensed under the GNU General Public License v3.0 and written by 
 ### Usage example
 
 Nunez, M. D., Gosai, A., Vandekerckhove, J., & Srinivasan, R. (2019).
-[The latency of a visual evoked potential tracks the onset of decision making.](https://www.researchgate.net/publication/332630466_The_latency_of_a_visual_evoked_potential_tracks_the_onset_of_decision_making) NeuroImage. doi: 10.1016/j.neuroimage.2019.04.052
+[The latency of a visual evoked potential tracks the onset of decision making.](https://sci-hub.tw/https://www.sciencedirect.com/science/article/pii/S1053811919303386) NeuroImage. doi: 10.1016/j.neuroimage.2019.04.052
 
-[Elsevier source](https://www.sciencedirect.com/science/article/pii/S1053811919303386)
+[Preprint](https://www.researchgate.net/publication/332630466_The_latency_of_a_visual_evoked_potential_tracks_the_onset_of_decision_making)

@@ -20,6 +20,7 @@
 # Date            Programmers                         Descriptions of Change
 # ====         ================                       ======================
 # 06/29/20      Michael Nunez                             Original code
+# 06/30/20      Michael Nunez                       Fix regression simulation
 
 
 # Modules
@@ -469,23 +470,23 @@ N = ntrials*nparts*nconds
 # Set random seed
 random.seed(2020)
 
-#True parameters
-ndt = np.random.uniform(.15, .6, size=(nparts,nconds)) # Uniform from .15 to .6 seconds
-alpha = np.random.uniform(.8, 1.4, size=(nparts,nconds)) # Uniform from .8 to 1.4 evidence units
-delta = np.random.uniform(-4, 4, size=(nparts, nconds)) # Uniform from -4 to 4 evidence units per second
+#Intercepts of linear regressions
+ndt_int = np.matlib.repmat(np.random.uniform(.4, .7, size=(1,nconds)),nparts,1) # Uniform from .4 to .7 seconds
+alpha_int = np.matlib.repmat(np.random.uniform(.8, 1.4, size=(1,nconds)),nparts,1) # Uniform from .8 to 1.4 evidence units
+delta_int = np.matlib.repmat(np.random.uniform(-2, 2, size=(1, nconds)),nparts,1) # Uniform from -2 to 2 evidence units per second
 
 #Slopes of linear regressions
-ndt_gamma = np.matlib.repmat(np.random.uniform(-.1, .1, size=(1,nconds)),nparts,1)
-alpha_gamma = np.matlib.repmat(np.random.uniform(-.5, .5, size=(1,nconds)),nparts,1)
+ndt_gamma = np.matlib.repmat(np.random.uniform(0, .1, size=(1,nconds)),nparts,1)
+alpha_gamma = np.matlib.repmat(np.random.uniform(-.1, .1, size=(1,nconds)),nparts,1)
 delta_gamma = np.matlib.repmat(np.random.uniform(-1, 1, size=(1,nconds)),nparts,1)
 
 #Regressors
 regressors1 = np.random.normal(size=(nparts,nconds)) #The same regressors for each parameter
 
-#Intercepts of linear regressions
-ndt_int = ndt - ndt_gamma*regressors1
-alpha_int = alpha - alpha_gamma*regressors1
-delta_int = delta - delta_gamma*regressors1
+#True parameters
+ndt = ndt_int + ndt_gamma*regressors1
+alpha = alpha_int + alpha_gamma*regressors1
+delta = delta_int + delta_gamma*regressors1
 
 
 ndttrialrange = np.random.uniform(0,.1, size=(nparts)) # Uniform from 0 to .1 seconds
@@ -776,17 +777,17 @@ plt.title('Recovery of boundary parameter intercept')
 plt.savefig(('figures/alpha_int_recovery_model3.png'), format='png',bbox_inches="tight")
 
 plt.figure()
-recovery(samples['delta_gamma'],genparam['delta_gamma'])
+recovery(samples['delta_gamma'],genparam['delta_gamma'][0,:])
 plt.title('Recovery of the drift-rate slope')
 plt.savefig(('figures/delta_gamma_recovery_model3.png'), format='png',bbox_inches="tight")
 
 plt.figure()
-recovery(samples['ndt_gamma'],genparam['ndt_gamma'])
+recovery(samples['ndt_gamma'],genparam['ndt_gamma'][0,:])
 plt.title('Recovery of the non-decision time slope')
 plt.savefig(('figures/ndt_gamma_recovery_model3.png'), format='png',bbox_inches="tight")
 
 plt.figure()
-recovery(samples['alpha_gamma'],genparam['alpha_gamma'])
+recovery(samples['alpha_gamma'],genparam['alpha_gamma'][0,:])
 plt.title('Recovery of boundary parameter slope')
 plt.savefig(('figures/alpha_gamma_recovery_model3.png'), format='png',bbox_inches="tight")
 
