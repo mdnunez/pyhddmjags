@@ -459,7 +459,7 @@ def recovery(possamps, truevals):  # Parameter recovery plots
 nparts = 40
 
 # Number of conditions
-nconds = 3
+nconds = 6
 
 # Number of trials per participant and condition
 ntrials = 50
