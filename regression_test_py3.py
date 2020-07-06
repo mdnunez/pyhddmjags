@@ -21,6 +21,7 @@
 # ====         ================                       ======================
 # 06/29/20      Michael Nunez                             Original code
 # 06/30/20      Michael Nunez                       Fix regression simulation
+# 07/06/20      Michael Nunez                Add summary function for parameter estimates
 
 
 # Modules
@@ -193,7 +194,7 @@ def diagnostic(insamples):
     Returns
     -------
     dict:
-        Rhat for each variable. Prints Maximum Rhat
+        Rhat, Rhatnew, Neff, posterior mean, and posterior std for each variable. Prints maximum Rhat, maximum Rhatnew, and minimum Neff across all variables
     """
 
     result = {}  # Initialize dictionary
@@ -302,6 +303,61 @@ def diagnostic(insamples):
     print("Maximum Rhat was %3.2f for variable %s" % (np.max(maxrhats),allkeys[np.argmax(maxrhats)]))
     print("Maximum Rhatnew was %3.2f for variable %s" % (np.max(maxrhatsnew),allkeys[np.argmax(maxrhatsnew)]))
     print("Minimum number of effective samples was %d for variable %s" % (np.min(minneff),allkeys[np.argmin(minneff)]))
+    return result
+
+
+def summary(insamples):
+    """
+    Returns parameter estimates for each posterior distribution (mean and median posteriors) as well as 95% and 99% credible intervals (.5th, 2.5th, 97.5th, 99.5th percentiles)
+
+    Parameters
+    ----------
+    insamples: dic
+        Sampled values of monitored variables as a dictionary where keys
+        are variable names and values are numpy arrays with shape:
+        (dim_1, dim_n, iterations, chains). dim_1, ..., dim_n describe the
+        shape of variable in JAGS model.
+    """
+
+    result = {}  # Initialize dictionary
+    maxrhats = np.zeros((len(insamples.keys())), dtype=float)
+    maxrhatsnew = np.zeros((len(insamples.keys())), dtype=float)
+    minneff = np.ones((len(insamples.keys())), dtype=float)*np.inf
+    allkeys ={} # Initialize dictionary
+    keyindx = 0
+    for key in insamples.keys():
+        if key[0] != '_':
+            result[key] = {}
+            
+            possamps = insamples[key]
+            
+            # Number of chains
+            nchains = possamps.shape[-1]
+            
+            # Number of samples per chain
+            nsamps = possamps.shape[-2]
+            
+            # Number of variables per key
+            nvars = np.prod(possamps.shape[0:-2])
+            
+            # Reshape data
+            allsamps = np.reshape(possamps, possamps.shape[:-2] + (nchains * nsamps,))
+
+            # Reshape data to preduce R_hatnew
+            possampsnew = np.empty(possamps.shape[:-2] + (int(nsamps/2), nchains * 2,))
+            newc=0
+            for c in range(nchains):
+                possampsnew[...,newc] = np.take(np.take(possamps,np.arange(0,int(nsamps/2)),axis=-2),c,axis=-1)
+                possampsnew[...,newc+1] = np.take(np.take(possamps,np.arange(int(nsamps/2),nsamps),axis=-2),c,axis=-1)
+                newc += 2
+
+            result[key]['mean'] = np.mean(allsamps, axis=-1)
+            result[key]['std'] = np.std(allsamps, axis=-1)
+            result[key]['median'] = np.quantile(allsamps,0.5, axis=-1)
+            result[key]['95lower'] = np.quantile(allsamps,0.025, axis=-1)
+            result[key]['95upper'] = np.quantile(allsamps,0.975, axis=-1)
+            result[key]['99lower'] = np.quantile(allsamps,0.005, axis=-1)
+            result[key]['99upper'] = np.quantile(allsamps,0.995, axis=-1)
     return result
 
 
