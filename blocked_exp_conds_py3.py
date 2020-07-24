@@ -23,6 +23,7 @@
 # 06/25/20      Michael NUnez             Removal of false plots, reduce problapse parameters
 # 06/29/20      Michael Nunez                 Save out jags code with fixed name
 # 07/06/20      Michael Nunez                Add summary function for parameter estimates
+# 07/24/20      Michael Nunez             Include posterior probability for Lapse process
 
 
 # Modules
@@ -533,3 +534,14 @@ plt.figure()
 jellyfish(samples['alpha'])
 plt.title('Posterior distributions of boundary parameter')
 plt.savefig(('figures/alpha_posteriors_model2.png'), format='png',bbox_inches="tight")
+
+#Find posterior probability of each trial being from a lapse process
+nchains = 6
+nthinsamps = 1000
+allDDMorLapse = np.reshape(samples['DDMorLapse'], samples['DDMorLapse'].shape[:-2] + (nchains * nthinsamps,))
+lapse_probability = (2 - np.mean(allDDMorLapse,axis=1)) #Posterior probability estimate of lapse trial
+plt.figure()
+plt.scatter(np.arange(lapse_probability.shape[0]),lapse_probability)
+plt.xlabel('Trial number')
+plt.ylabel('Lapse posterior probability')
+plt.savefig(('figures/lapse_posteriors_model2.png'), format='png',bbox_inches="tight")
