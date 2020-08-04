@@ -24,6 +24,7 @@
 # 06/29/20      Michael Nunez                 Save out jags code with fixed name
 # 07/06/20      Michael Nunez                Add summary function for parameter estimates
 # 07/24/20      Michael Nunez             Include posterior probability for Lapse process
+# 08/04/20      Michael Nunez                    Fix lapse probability calculation
 
 
 # Modules
@@ -539,7 +540,7 @@ plt.savefig(('figures/alpha_posteriors_model2.png'), format='png',bbox_inches="t
 nchains = 6
 nthinsamps = 1000
 allDDMorLapse = np.reshape(samples['DDMorLapse'], samples['DDMorLapse'].shape[:-2] + (nchains * nthinsamps,))
-lapse_probability = (2 - np.mean(allDDMorLapse,axis=1)) #Posterior probability estimate of lapse trial
+lapse_probability = (np.mean(allDDMorLapse,axis=1) - 1) #Posterior probability estimate of lapse trial
 plt.figure()
 plt.scatter(np.arange(lapse_probability.shape[0]),lapse_probability)
 plt.xlabel('Trial number')
