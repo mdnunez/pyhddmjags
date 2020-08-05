@@ -34,7 +34,6 @@ import pyjags
 import scipy.io as sio
 from scipy import stats
 import warnings
-import random
 import os
 import matplotlib.pyplot as plt
 
@@ -527,7 +526,7 @@ ntrials = 50
 N = ntrials*nparts*nconds
 
 # Set random seed
-random.seed(2020)
+np.random.seed(2020)
 
 ndt = np.random.uniform(.15, .6, size=(nparts)) # Uniform from .15 to .6 seconds
 alpha = np.random.uniform(.8, 1.4, size=(nparts)) # Uniform from .8 to 1.4 evidence units

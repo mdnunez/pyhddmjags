@@ -33,7 +33,6 @@ import pyjags
 import scipy.io as sio
 from scipy import stats
 import warnings
-import random
 import os
 import matplotlib.pyplot as plt
 
@@ -339,7 +338,7 @@ for p in range(0,nparts):
 # JAGS code
 
 # Set random seed
-random.seed(2020)
+np.random.seed(2020)
 
 tojags = '''
 model {

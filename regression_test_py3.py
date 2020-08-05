@@ -31,7 +31,6 @@ import pyjags
 import scipy.io as sio
 from scipy import stats
 import warnings
-import random
 import os
 import matplotlib.pyplot as plt
 
@@ -524,7 +523,7 @@ ntrials = 50
 N = ntrials*nparts*nconds
 
 # Set random seed
-random.seed(2020)
+np.random.seed(2020)
 
 #Intercepts of linear regressions
 ndt_int = np.matlib.repmat(np.random.uniform(.4, .7, size=(1,nconds)),nparts,1) # Uniform from .4 to .7 seconds
