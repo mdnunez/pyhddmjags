@@ -788,17 +788,17 @@ diags = diagnostic(samples_diagrelevant)
 plt.figure()
 jellyfish(samples['delta'])
 plt.title('Posterior distributions of the drift-rate')
-plt.savefig(('figures/delta_posndtiors_model3.png'), format='png',bbox_inches="tight")
+plt.savefig(('figures/delta_posteriors_model3.png'), format='png',bbox_inches="tight")
 
 plt.figure()
 jellyfish(samples['ndt'])
 plt.title('Posterior distributions of the non-decision time parameter')
-plt.savefig(('figures/ndt_posndtiors_model3.png'), format='png',bbox_inches="tight")
+plt.savefig(('figures/ndt_posteriors_model3.png'), format='png',bbox_inches="tight")
 
 plt.figure()
 jellyfish(samples['alpha'])
 plt.title('Posterior distributions of boundary parameter')
-plt.savefig(('figures/alpha_posndtiors_model3.png'), format='png',bbox_inches="tight")
+plt.savefig(('figures/alpha_posteriors_model3.png'), format='png',bbox_inches="tight")
 
 #Recovery
 plt.figure()
