@@ -13,11 +13,8 @@ This step has been tested on Ubuntu 18.04 LTS, Ubuntu 20.04 LTS and Ubuntu 18.04
 
 ```bash
 TEMP_DEB="$(mktemp)"
-
 wget -O "$TEMP_DEB" "https://launchpad.net/~cidlab/+archive/ubuntu/jwm/+files/jags-wiener-module_1.1-5_amd64.deb"
-
 sudo dpkg -i "$TEMP_DEB"
-
 rm -f "$TEMP_DEB"
 ```
 
