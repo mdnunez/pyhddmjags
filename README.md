@@ -1,5 +1,5 @@
 # pyhddmjags
-#### (Repository version 0.2.7)
+#### (Repository version 0.2.8)
 Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS in Python
 
 **Authors: Michael D. Nunez from the Cognitive Sciences Department at the University of California, Irvine**
@@ -19,6 +19,12 @@ Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS
 The repository can be cloned with `git clone https://github.com/mdnunez/pyhddmjags.git`
 
 The repository can also be may download via the _Download zip_ button above.
+
+### Getting started
+
+At the moment each script can be run individually to simulate from hierarchical drift-diffusion models and then find (and recover) parameter estiamtes from those models. See scripts blocked_exp_conds_py3.py, recovery_test_py3.py, and regression_test_py3.py. These scripts also provide useful examples for using JAGS with pyjags, the JAGS Wiener module, mixture modeling in JAGS, and Bayesian diagnostics in Python.
+
+In the future this package will have callable functions.
 
 ### License
 
