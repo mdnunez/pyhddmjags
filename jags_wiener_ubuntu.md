@@ -2,8 +2,10 @@
 
 #### 1. Install JAGS:
 
-  `sudo apt-get update`
-  `sudo apt-get install jags`
+```bash
+sudo apt-get update
+sudo apt-get install jags
+```
 
 #### 2. Install precompiled JAGS-WIENER for debian. If this works go to step 5.
 

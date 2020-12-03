@@ -12,8 +12,10 @@ For these next install steps in Ubuntu, see jags_wiener_ubuntu.md in this reposi
 
 [MCMC Sampling Program: JAGS](http://mcmc-jags.sourceforge.net/)
 
-[Python Repository: pyjags](https://github.com/michaelnowotny/pyjags), use `pip install pyjags`
-
+[Python Repository: pyjags](https://github.com/michaelnowotny/pyjags), or use:
+```bash
+pip install pyjags
+```
 [Program: JAGS Wiener module](https://sourceforge.net/projects/jags-wiener/)
 
 
