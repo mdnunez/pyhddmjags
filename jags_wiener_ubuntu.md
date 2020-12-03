@@ -1,37 +1,34 @@
-#### Install JAGS and JAGS-WIENER on Ubuntu
+## JAGS and JAGS-WIENER installation steps on Ubuntu
 
+#### 1. Install JAGS:
 
-## Just Another Gibbs Sampler (JAGS) installation steps on Ubuntu:
+  `sudo apt-get update`
+  `sudo apt-get install jags`
 
-1. Install JAGS:
+#### 2. Install precompiled JAGS-WIENER for debian. If this works go to step 5.
 
-  `sudo apt-get update
-  sudo apt-get install jags`
+This step has been tested on Ubuntu 18.04 LTS, Ubuntu 20.04 LTS and Ubuntu 18.04 LTS for Windows Subsystem Linux (WSL). This step will likely work for other Ubuntu distributions and may work for some other debian distributions.
 
-2. Install precompiled JAGS-WIENER for debian. If this works go to step 5.
+  `TEMP_DEB="$(mktemp)" `
+  `wget -O "$TEMP_DEB" "https://launchpad.net/~cidlab/+archive/ubuntu/jwm/+files/jags-wiener-module_1.1-5_amd64.deb" `
+  `sudo dpkg -i "$TEMP_DEB" `
+  `rm -f "$TEMP_DEB"` `
 
-This step has been tested on Ubuntu 18.04, 20.04 LTS and Ubuntu 18.04 LTS for Windows Subsystem Linux (WSL). This step will likely work for other Ubuntu distributions and may work for some other debian distributions.
-
-  `TEMP_DEB="$(mktemp)"
-  wget -O "$TEMP_DEB" "https://launchpad.net/~cidlab/+archive/ubuntu/jwm/+files/jags-wiener-module_1.1-5_amd64.deb"
-  sudo dpkg -i "$TEMP_DEB"
-  rm -f "$TEMP_DEB"`
-
-3. If step 2 doesn't work, install dependencies for JAGS-WIENER
+#### 3. If step 2 doesn't work, install dependencies for JAGS-WIENER
 
   `sudo apt-get install autoconf automake libtool g++`
 
-4. If step 2 doesn't work and step 3 completed successfully, download and install JAGS-WIENER
+#### 4. If step 2 doesn't work and step 3 completed successfully, download and install JAGS-WIENER
 
-  `cd ~
-  mkdir install
-  cd install
-  wget http://downloads.sourceforge.net/project/jags-wiener/JAGS-WIENER-MODULE-1.1.tar.gz
-  tar -zxvf JAGS-WIENER-MODULE-1.1.tar.gz
-  cd JAGS-WIENER-MODULE-1.1
-  ./configure --prefix=/usr/lib/x86_64-linux-gnu
-  make
-  sudo make install`
+  `cd ~ `
+  `mkdir install `
+  `cd install `
+  `wget http://downloads.sourceforge.net/project/jags-wiener/JAGS-WIENER-MODULE-1.1.tar.gz `
+  `tar -zxvf JAGS-WIENER-MODULE-1.1.tar.gz `
+  `cd JAGS-WIENER-MODULE-1.1 `
+  `./configure --prefix=/usr/lib/x86_64-linux-gnu `
+  `make `
+  `sudo make install`
 
 Note that the prefix in the 3rd to last line above may change based on the install location of JAGS. This is especially likely if this error occurs:
 
@@ -46,17 +43,17 @@ For instance, if the result is ”/usr/lib/local/JAGS/modules-4/dic.la” Then I
 
   `./configure --prefix=/usr/lib/local`
 
-5. Test installation (last three commands will be within JAGS terminal):
+#### 5. Test installation (last three commands will be within JAGS terminal):
 
-  `jags
-  load dic
-  load wiener
-  exit`
+  `jags `
+  `load dic `
+  `load wiener `
+  `exit`
 
 A successful installation of JAGS should load the modules: basemod “ok”, bugs “ok”, and dic “ok”. A successful installation of JAGS-WIENER that is found by JAGS will load wiener “ok”.
 
-6. (Optional) Install pyjags and dependencies (after installing Anaconda Python):
+#### 6. (Optional) Install pyjags and dependencies (after installing Anaconda Python):
 
- `sudo apt-get install pkg-config
- pip install pyjags`
+ `sudo apt-get install pkg-config `
+ `pip install pyjags`
 
