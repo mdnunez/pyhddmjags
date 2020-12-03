@@ -1,18 +1,21 @@
 # pyhddmjags
-#### (Repository version 0.2.8)
+#### (Repository version 0.2.9)
 Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS in Python
 
 **Authors: Michael D. Nunez from the Cognitive Sciences Department at the University of California, Irvine**
 
 ### Prerequisites
 
+[Python 3 and Scientific Python libraries](https://www.anaconda.com/products/individual)
+
+For these next install steps in Ubuntu, see jags_wiener_ubuntu.md in this repository.
+
 [MCMC Sampling Program: JAGS](http://mcmc-jags.sourceforge.net/)
+
+[Python Repository: pyjags](https://github.com/michaelnowotny/pyjags), use `pip install pyjags`
 
 [Program: JAGS Wiener module](https://sourceforge.net/projects/jags-wiener/)
 
-[Scientific Python libraries](https://www.continuum.io/downloads)
-
-[Python Repository: pyjags](https://github.com/tmiasko/pyjags)
 
 ### Downloading
 
