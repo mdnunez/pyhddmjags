@@ -28,7 +28,7 @@ The repository can also be may download via the _Download zip_ button above.
 
 ### Getting started
 
-At the moment each script can be run individually to simulate from hierarchical drift-diffusion models and then find (and recover) parameter estimates from those models. See scripts blocked_exp_conds_py3.py, recovery_test_py3.py, and regression_test_py3.py. These scripts also provide useful examples for using JAGS with pyjags, the JAGS Wiener module, mixture modeling in JAGS, and Bayesian diagnostics in Python.
+At the moment each script can be run individually to simulate from hierarchical drift-diffusion models (HDDMs) and then find (and recover) parameter estimates from those models. See scripts blocked_exp_conds_py3.py, recovery_test_py3.py, and regression_test_py3.py. These scripts also provide useful examples for using JAGS with pyjags, the JAGS Wiener module, mixture modeling in JAGS, and Bayesian diagnostics in Python.
 
 In the future this package will be more user-friendly.
 
@@ -40,11 +40,18 @@ pyhddmjags is licensed under the GNU General Public License v3.0 and written by 
 
 Nunez, M. D., Gosai, A., Vandekerckhove, J., & Srinivasan, R. (2019).
 [The latency of a visual evoked potential tracks the onset of decision making.](https://sci-hub.st/https://www.sciencedirect.com/science/article/pii/S1053811919303386) NeuroImage. doi: 10.1016/j.neuroimage.2019.04.052
+(See repository [encodingN200](https://github.com/mdnunez/encodingN200) associated with this paper for specific pyjags examples.)
+
+Lui, K. K., Nunez, M. D., Cassidy, J. M., Vandekerckhove, J., Cramer, S. C., & Srinivasan, R. (2020).
+[Timing of readiness potentials reflect a decision-making process in the human brain.](https://sci-hub.st/https://link.springer.com/article/10.1007/s42113-020-00097-5) Computational Brain & Behavior.
+(See repository [RPDecision](https://github.com/mdnunez/RPDecision) associated with this paper for a specific HDDM in JAGS using MATLAB.)
 
 Nunez, M. D., Vandekerckhove, J., & Srinivasan, R. (2017).
 [How attention influences perceptual decision making: Single-trial EEG correlates of drift-diffusion model parameters.](https://sci-hub.st/https://www.sciencedirect.com/science/article/abs/pii/S0022249616000316)
 Journal of Mathematical Psychology, 76, 117-130.
+(See repository [mcntoolbox](https://github.com/mdnunez/mcntoolbox) associated with this paper for a specific HDDM in JAGS using MATLAB.)
 
 Nunez, M. D., Srinivasan, R., & Vandekerckhove, J. (2015). 
 [Individual differences in attention influence perceptual decision making.](https://www.frontiersin.org/articles/10.3389/fpsyg.2015.00018/full) 
 Frontiers in Psychology, 8.
+(This paper fit HDDMs in JAGS like that in regression_test_py3.py using MATLAB and [Trinity](https://github.com/joachimvandekerckhove/trinity).)
