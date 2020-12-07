@@ -290,7 +290,7 @@ def diagnostic(insamples):
                 rho_hat_even = 0
                 rho_hat_odd = 0
                 t = 2
-                while ((t < nsamps - 2) & (float(rho_hat_eFven) + float(rho_hat_odd) >= 0)):
+                while ((t < nsamps - 2) & (float(rho_hat_even) + float(rho_hat_odd) >= 0)):
                     variogram_odd = np.mean(np.mean(np.power(alldata[v,(t-1):nsamps,:] - alldata[v,0:(nsamps-t+1),:],2),axis=0)) # above equation (11.7) in Gelman et al., 2013
                     rho_hat_odd = 1 - np.divide(variogram_odd, 2*totalestvar[whereis]) # Equation (11.7) in Gelman et al., 2013
                     rho_hat.append(rho_hat_odd)
