@@ -203,7 +203,7 @@ def diagnostic(insamples):
     """
 
     result = {}  # Initialize dictionary
-    maxrhats = np.zeros((len(insamples.keys())), dtype=float)
+    maxrhatsold = np.zeros((len(insamples.keys())), dtype=float)
     maxrhatsnew = np.zeros((len(insamples.keys())), dtype=float)
     minneff = np.ones((len(insamples.keys())), dtype=float)*np.inf
     allkeys ={} # Initialize dictionary
