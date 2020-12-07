@@ -306,8 +306,12 @@ def diagnostic(insamples):
 
             # Geweke statistic?
     # print("Maximum old Rhat was %3.2f for variable %s" % (np.max(maxrhatsold),allkeys[np.argmax(maxrhatsold)]))
-    print("Maximum Rhat was %3.2f for variable %s" % (np.max(maxrhatsnew),allkeys[np.argmax(maxrhatsnew)]))
-    print("Minimum number of effective samples was %d for variable %s" % (np.min(minneff),allkeys[np.argmin(minneff)]))
+    maxrhatkey = allkeys[np.argmax(maxrhatsnew)]
+    maxrhatindx = np.unravel_index( np.argmax(result[maxrhatkey]['rhat']) , result[maxrhatkey]['rhat'].shape)
+    print("Maximum Rhat was %3.2f for variable %s at index %s" % (np.max(maxrhatsnew), maxrhatkey, maxrhatindx))
+    minneffkey = allkeys[np.argmin(minneff)]
+    minneffindx = np.unravel_index( np.argmin(result[minneffkey]['neff']) , result[maxrhatkey]['neff'].shape)
+    print("Minimum number of effective samples was %d for variable %s at index %s" % (np.min(minneff), minneffkey, minneffindx))
     return result
 
 
