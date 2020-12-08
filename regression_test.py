@@ -58,7 +58,7 @@ if not os.path.exists('data/genparam_test3.mat'):
     N = ntrials*nparts*nconds
 
     # Set random seed
-    np.random.seed(2020)
+    np.random.seed(2021)
 
     #Intercepts of linear regressions
     ndt_int = np.matlib.repmat(np.random.uniform(.4, .7, size=(1,nconds)),nparts,1) # Uniform from .4 to .7 seconds
@@ -71,7 +71,7 @@ if not os.path.exists('data/genparam_test3.mat'):
     delta_gamma = np.matlib.repmat(np.random.uniform(-1, 1, size=(1,nconds)),nparts,1)
 
     #Regressors
-    regressors1 = np.random.normal(size=(nparts,nconds)) #The same regressors for each parameter
+    regressors1 = np.random.normal(size=(nparts,nconds)) #The same regressors for each parameter, from a standard normal distribution
 
     #True parameters
     ndt = ndt_int + ndt_gamma*regressors1
@@ -135,10 +135,18 @@ if not os.path.exists('data/genparam_test3.mat'):
 else:
     genparam = sio.loadmat('data/genparam_test3.mat')
 
-# JAGS code
 
-# Set random seed
-random.seed(2020)
+
+#Fit model to data
+y = np.squeeze(genparam['y'])
+rt = np.squeeze(genparam['rt'])
+participant = np.squeeze(genparam['participant'])
+condition = np.squeeze(genparam['condition'])
+nparts = np.squeeze(genparam['nparts'])
+nconds = np.squeeze(genparam['nconds'])
+regressors1 = np.squeeze(genparam['regressors1'])
+ntrials = np.squeeze(genparam['ntrials'])
+N = np.squeeze(genparam['N'])
 
 minrt = np.zeros((nparts,nconds))
 for p in range(0,nparts):
@@ -147,10 +155,14 @@ for p in range(0,nparts):
 
 
 
+# Set random seed
+np.random.seed(2021)
 
 # Input for mixture modeling
 Ones = np.ones(N)
 Constant = 20
+
+#JAGS code
 
 tojags = '''
 model {

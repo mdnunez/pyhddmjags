@@ -118,7 +118,7 @@ else:
 # JAGS code
 
 # Set random seed
-random.seed(2020)
+np.random.seed(2020)
 
 tojags = '''
 model {
