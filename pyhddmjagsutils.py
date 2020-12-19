@@ -310,7 +310,7 @@ def diagnostic(insamples):
     maxrhatindx = np.unravel_index( np.argmax(result[maxrhatkey]['rhat']) , result[maxrhatkey]['rhat'].shape)
     print("Maximum Rhat was %3.2f for variable %s at index %s" % (np.max(maxrhatsnew), maxrhatkey, maxrhatindx))
     minneffkey = allkeys[np.argmin(minneff)]
-    minneffindx = np.unravel_index( np.argmin(result[minneffkey]['neff']) , result[maxrhatkey]['neff'].shape)
+    minneffindx = np.unravel_index( np.argmin(result[minneffkey]['neff']) , result[minneffkey]['neff'].shape)
     print("Minimum number of effective samples was %d for variable %s at index %s" % (np.min(minneff), minneffkey, minneffindx))
     return result
 
@@ -457,8 +457,8 @@ def jellyfish(possamps):  # jellyfish plots
 
 def recovery(possamps, truevals):  # Parameter recovery plots
     """Plots true parameters versus 99% and 95% credible intervals of recovered
-    parameters. Also plotted are the median and mean of the posterior
-    distributions
+    parameters. Also plotted are the median (circles) and mean (stars) of the posterior
+    distributions.
 
     Parameters
     ----------
