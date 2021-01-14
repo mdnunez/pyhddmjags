@@ -1,6 +1,6 @@
 # pyhddmjagsutils.py - Definitions for simulation, model diagnostics, and parameter recovery
 #
-# Copyright (C) 2020 Michael D. Nunez, <mdnunez1@uci.edu>
+# Copyright (C) 2021 Michael D. Nunez, <mdnunez1@uci.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 # ====         ================                       ======================
 # 06/29/20      Michael Nunez                             Original code
 # 12/04/20      Michael Nunez              Update explanation of summary output
-
+# 01/14/21      Michael Nunez             Add simuldiff2ndt() and flipstanout()
 
 # Modules
 import numpy as np
@@ -169,6 +169,155 @@ def simulratcliff(N=100,Alpha=1,Tau=.4,Nu=1,Beta=.5,rangeTau=0,rangeBeta=0,Eta=.
 
     result = T*XX
     return result
+
+
+
+def simuldiff2ndt(N=100,Alpha=1,Vet=.2,Rmr=.2,Nu=1,Zeta=None,rangeVet=0,rangeRmr=0,rangeZeta=0,Eta=.3,Varsigma=1):
+    """
+    SIMULDIFF2NDT  Generates data according to a diffusion model with non-decision time split into two parts with independent variance
+
+
+    Reference:
+    Tuerlinckx, F., Maris, E.,
+    Ratcliff, R., & De Boeck, P. (2001). A comparison of four methods for
+    simulating the diffusion process. Behavior Research Methods,
+    Instruments, & Computers, 33, 443-456.
+
+    Parameters
+    ----------
+    N: a integer denoting the size of the output vector
+    (defaults to 100 experimental trials)
+
+    Alpha: the mean boundary separation across trials  in evidence units
+    (defaults to 1 evidence unit)
+
+    Vet: the mean visual encoding time across trials in seconds
+    (defaults to .2 seconds)
+
+    Rmr: the mean residual motor response time across trials in seconds
+    (defaults to .2 seconds)
+
+    Nu: the mean drift rate across trials in evidence units per second
+    (defaults to 1 evidence units per second, restricted to -5 to 5 units)
+
+    Zeta: the initial bias in the evidence process for choice A
+    (defaults to 50% of total evidence units given by Alpha)
+
+    rangeVet: Visual encoding time across trials is generated from a uniform
+    distribution of Vet - rangeVet/2 to  Vet + rangeVet/2 across trials
+    (defaults to 0 seconds)
+
+    rangeRmr: Residual motor response time across trials is generated from a uniform
+    distribution of Rmr - rangeRmr/2 to  Rmr + rangeRmr/2 across trials
+    (defaults to 0 seconds)
+
+    rangeZeta: Bias across trials is generated from a uniform distribution
+    of Zeta - rangeZeta/2 to Zeta + rangeZeta/2 across trials
+    (defaults to 0 evidence units)
+
+    Eta: Standard deviation of the drift rate across trials
+    (defaults to 3 evidence units per second, restricted to less than 3 evidence units)
+
+    Varsigma: The diffusion coefficient, the standard deviation of the
+    evidence accumulation process within one trial. It is recommended that
+    this parameter be kept fixed unless you have reason to explore this parameter
+    (defaults to 1 evidence unit per second)
+
+    Returns
+    -------
+    Numpy complex vector with 1) Real component ( np.real(x) ): reaction times (in seconds) multiplied by the response vector
+    such that negative reaction times encode response B and positive reaction times
+    encode response A  and 2) Imaginary component ( np.imag(x) ): N200 peak-latencies in seconds
+    
+    
+    Converted from simuldiff.m MATLAB script by Joachim Vandekerckhove
+    See also http://ppw.kuleuven.be/okp/dmatoolbox.
+    """
+
+    if Zeta is None:
+        Zeta = .5*Alpha
+
+    if (Nu < -5) or (Nu > 5):
+        Nu = np.sign(Nu)*5
+        warnings.warn('Nu is not in the range [-5 5], bounding drift rate to %.1f...' % (Nu))
+
+    if (Eta > 3):
+        warning.warn('Standard deviation of drift rate is out of bounds, bounding drift rate to 3')
+        eta = 3
+
+    if (Eta == 0):
+        Eta = 1e-16
+
+    #Initialize output vectors
+    result = np.zeros(N)
+    T = np.zeros(N)
+    XX = np.zeros(N)
+    N200 = np.zeros(N)
+
+    #Called sigma in 2001 paper
+    D = np.power(Varsigma,2)/2
+
+    #Program specifications
+    eps = 2.220446049250313e-16 #precision from 1.0 to next double-precision number
+    delta=eps
+
+    for n in range(0,N):
+        r1 = np.random.normal()
+        mu = Nu + r1*Eta
+        zz = Zeta - rangeZeta/2 + rangeZeta*np.random.uniform()
+        finish = 0
+        totaltime = 0
+        startpos = 0
+        Aupper = Alpha - zz
+        Alower = -zz
+        radius = np.min(np.array([np.abs(Aupper), np.abs(Alower)]))
+        while (finish==0):
+            lambda_ = 0.25*np.power(mu,2)/D + 0.25*D*np.power(np.pi,2)/np.power(radius,2)
+            # eq. formula (13) in 2001 paper with D = sigma^2/2 and radius = Alpha/2
+            F = D*np.pi/(radius*mu)
+            F = np.power(F,2)/(1 + np.power(F,2) )
+            # formula p447 in 2001 paper
+            prob = np.exp(radius*mu/D)
+            prob = prob/(1 + prob)
+            dir_ = 2*(np.random.uniform() < prob) - 1
+            l = -1
+            s2 = 0
+            while (s2>l):
+                s2=np.random.uniform()
+                s1=np.random.uniform()
+                tnew=0
+                told=0
+                uu=0
+                while (np.abs(tnew-told)>eps) or (uu==0):
+                    told=tnew
+                    uu=uu+1
+                    tnew = told + (2*uu+1) * np.power(-1,uu) * np.power(s1,(F*np.power(2*uu+1,2)));
+                    # infinite sum in formula (16) in BRMIC,2001
+                l = 1 + np.power(s1,(-F)) * tnew;
+            # rest of formula (16)
+            t = np.abs(np.log(s1))/lambda_;
+            # is the negative of t* in (14) in BRMIC,2001
+            totaltime=totaltime+t
+            dir_=startpos+dir_*radius
+            vetime = Vet - rangeVet/2 + rangeVet*np.random.uniform()
+            rmrt = Rmr - rangeRmr/2 + rangeRmr*np.random.uniform()
+            if ( (dir_ + delta) > Aupper):
+                T[n]=vetime+totaltime+rmrt
+                XX[n]=1
+                N200[n]=vetime
+                finish=1
+            elif ( (dir_-delta) < Alower ):
+                T[n]=vetime+totaltime+rmrt
+                XX[n]=-1
+                N200[n]=vetime
+                finish=1
+            else:
+                startpos=dir_
+                radius=np.min(np.abs([Aupper, Alower]-startpos))
+
+    result = T*XX + N200*1.j
+    return result
+
 
 
 def diagnostic(insamples):
@@ -368,6 +517,24 @@ def summary(insamples):
             result[key]['99lower'] = np.quantile(allsamps,0.005, axis=-1)
             result[key]['99upper'] = np.quantile(allsamps,0.995, axis=-1)
     return result
+
+
+def flipstanout(insamples):
+    result = {}  # Initialize dictionary
+    allkeys ={} # Initialize dictionary
+    keyindx = 0
+    for key in insamples.keys():
+        if key[0] != '_':
+            possamps = insamples[key]
+            transamps = np.moveaxis(possamps,0,-1)
+            bettersamps = np.moveaxis(transamps,0,-1)
+            if len(bettersamps.shape) == 2:
+                reshapedsamps = np.reshape(bettersamps, (1,) + bettersamps.shape[0:2])
+                result[key] = reshapedsamps
+            else:
+                result[key] = bettersamps
+    return result
+
 
 
 def jellyfish(possamps):  # jellyfish plots
