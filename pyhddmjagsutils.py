@@ -106,7 +106,6 @@ def simulratcliff(N=100,Alpha=1,Tau=.4,Nu=1,Beta=.5,rangeTau=0,rangeBeta=0,Eta=.
     result = np.zeros(N)
     T = np.zeros(N)
     XX = np.zeros(N)
-    N200 = np.zeros(N)
 
     #Called sigma in 2001 paper
     D = np.power(Varsigma,2)/2
