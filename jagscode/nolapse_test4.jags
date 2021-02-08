@@ -1,0 +1,77 @@
+
+model {
+    
+    ##########
+    #Between-condition variability parameters priors
+    ##########
+
+    #Between-condition variability in drift rate to choice A
+    deltasdcond ~ dgamma(1,1)
+
+    ##########
+    #Between-participant variability parameters priors
+    ##########
+
+    #Between-participant variability in non-decision time
+    tersd ~ dgamma(.3,1)
+
+    #Between-participant variability in Speed-accuracy trade-off
+    alphasd ~ dgamma(1,1)
+
+    #Between-participant variability in choice A start point bias
+    betasd ~ dgamma(.3,1)
+
+    #Between-participant variability in drift rate to choice A
+    deltasd ~ dgamma(1,1)
+
+    ##########
+    #Hierarchical DDM parameter priors
+    ##########
+
+    #Hierarchical Non-decision time
+    terhier ~ dnorm(.5, pow(.25,-2))
+
+    #Hierarchical boundary parameter (speed-accuracy tradeoff)
+    alphahier ~ dnorm(1, pow(.5,-2))
+
+    #Hierarchical start point bias towards choice A
+    betahier ~ dnorm(.5, pow(.25,-2))
+
+    #Hierarchical drift rate to choice A
+    deltahier ~ dnorm(0, pow(2, -2))
+
+    ##########
+    #Participant-level DDM parameter priors
+    ##########
+    for (p in 1:nparts) {
+
+        #Non-decision time
+        ter[p] ~ dnorm(terhier, pow(tersd,-2))T(0, 1)
+
+        #Boundary parameter (speed-accuracy tradeoff)
+        alpha[p] ~ dnorm(alphahier, pow(alphasd,-2))T(0, 3)
+
+        #Rightward start point bias towards choice A
+        beta[p] ~ dnorm(betahier, pow(betasd,-2))T(0, 1)
+
+        #Participant-level drift rate to choice A
+        deltapart[p] ~ dnorm(deltahier, pow(deltasd, -2))
+
+        for (c in 1:nconds) {
+
+            #Participant-level drift rate to choice A
+            delta[p,c] ~ dnorm(deltapart[p], pow(deltasdcond, -2))
+
+        }
+
+    }
+
+    ##########
+    # Wiener likelihood and uniform mixture using Ones trick
+    for (i in 1:N) {
+
+        # Observations of accuracy*RT for DDM process of rightward/leftward RT
+        y[i] ~ dwiener(alpha[participant[i]], ter[participant[i]], beta[participant[i]], delta[participant[i],condition[i]])
+
+    }
+}
