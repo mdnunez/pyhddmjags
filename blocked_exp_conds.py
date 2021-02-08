@@ -1,6 +1,6 @@
 # blocked_exp_conds.py - Code to fit a HDDM with fixed start point from a blocked condition experiment using JAGS in Python 3
 #
-# Copyright (C) 2020 Michael D. Nunez, <mdnunez1@uci.edu>
+# Copyright (C) 2021 Michael D. Nunez, <mdnunez1@uci.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 # 07/24/20      Michael Nunez             Include posterior probability for Lapse process
 # 08/04/20      Michael Nunez                    Fix lapse probability calculation
 # 12/04/20      Michael Nunez               Call definitions from pyhddmjagsutils.py, generate simulations
+# 01/26/21      Michael Nunez                 Correct some comments in JAGS code
 
 
 # Modules
@@ -178,7 +179,7 @@ model {
     #Hierarchical DDM parameter priors
     ##########
 
-    #Hierarchical drift rate to choice A
+    #Hierarchical drift rate to correct
     deltahier ~ dnorm(0, pow(2, -2))
 
     #Hierarchical Non-decision time
@@ -208,9 +209,13 @@ model {
         problapse[p] ~ dnorm(problapsehier, pow(problapsesd,-2))T(0, 1)
         probDDM[p] <- 1 - problapse[p]
 
+
+        ##########
+        #Condition-level DDM parameter priors
+        ##########
         for (c in 1:nconds) {
 
-            #Participant-level drift rate to correct
+            #Drift rate to correct
             delta[p,c] ~ dnorm(deltapart[p], pow(deltasdcond, -2))
 
             #Non-decision time

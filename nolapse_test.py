@@ -174,7 +174,7 @@ model {
     }
 
     ##########
-    # Wiener likelihood and uniform mixture using Ones trick
+    # Wiener likelihood
     for (i in 1:N) {
 
         # Observations of accuracy*RT for DDM process of rightward/leftward RT
