@@ -1,4 +1,5 @@
-# recovery_test.py - Testing JAGS fits of HDDM models in JAGS using pyjags in Python 3
+# recovery_test.py - Testing JAGS fits of HDDM models in JAGS using pyjags in Python 3, 
+#                    This hierarchical model is usuaully appropriate for trials with intermixed experimental conditions
 #
 # Copyright (C) 2020 Michael D. Nunez, <mdnunez1@uci.edu>
 #

@@ -20,6 +20,7 @@
 # Date            Programmers                         Descriptions of Change
 # ====         ================                       ======================
 # 02/08/21      Michael Nunez                             Original code
+# 02/15/21      Michael Nunez                      Clean up parameter descriptions in JAGS code
 
 
 # Modules
@@ -158,7 +159,7 @@ model {
         #Boundary parameter (speed-accuracy tradeoff)
         alpha[p] ~ dnorm(alphahier, pow(alphasd,-2))T(0, 3)
 
-        #Rightward start point bias towards choice A
+        #Start point bias towards choice A
         beta[p] ~ dnorm(betahier, pow(betasd,-2))T(0, 1)
 
         #Participant-level drift rate to choice A
