@@ -1,5 +1,5 @@
 # pyhddmjags
-#### (Repository version 0.4.0)
+#### (Repository version 0.4.2)
 Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS in Python
 
 **Authors: Michael D. Nunez from the Cognitive Sciences Department at the University of California, Irvine**
@@ -18,6 +18,9 @@ For these next install steps in Ubuntu, see jags_wiener_ubuntu.md in this reposi
 ```bash
 pip install pyjags
 ```
+Optional:
+
+[pystan](https://pystan.readthedocs.io)
 
 
 ### Downloading
@@ -28,9 +31,9 @@ The repository can also be may download via the _Download zip_ button above.
 
 ### Getting started
 
-At the moment each script can be run individually to simulate from hierarchical drift-diffusion models (HDDMs) and then find (and recover) parameter estimates from those models. See scripts blocked_exp_conds.py, recovery_test.py, and regression_test.py. These scripts also provide useful examples for using JAGS with pyjags, the JAGS Wiener module, mixture modeling in JAGS, and Bayesian diagnostics in Python.
+At the moment each script can be run individually to simulate from hierarchical drift-diffusion models (HDDMs) and then find and recover parameter estimates from those models. See scripts nolapse_test.py, recovery_test.py, blocked_exp_conds.py, and regression_test.py. These scripts also provide useful examples for using JAGS with pyjags, the JAGS Wiener module, mixture modeling in JAGS, and Bayesian diagnostics in Python. 
 
-In the future this package will be more user-friendly.
+The script nolapse_test_stan.py contains pystan and Stan code to find and recover parameters from the exact same HDDM written in JAGS within nolapse_test.py.
 
 ### License
 
