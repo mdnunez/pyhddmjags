@@ -1,6 +1,8 @@
-# simpleCPP_test.py - Testing JAGS fits of a non-hierarchical Neural-DDM model in JAGS using pyjags in Python 3, Assumes CPP slopes are generated from drift rates
+# simpleCPP_test.py - Testing JAGS fits of a non-hierarchical Neural-DDM model
+# in JAGS using pyjags in Python 3,
+# assumes CPP slopes are generated from drift rates
 #
-# Copyright (C) 2021 Michael D. Nunez, <mdnunez1@uci.edu>
+# Copyright (C) 2022 Michael D. Nunez, <mdnunez1@uci.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +22,12 @@
 # Date            Programmers                         Descriptions of Change
 # ====         ================                       ======================
 # 08/12/21      Michael Nunez                             Original code
+# 2021-09-08    Michael Nunez           Plot recovery figure for tutorial paper
 
+
+# Internet resources:
+# https://stackoverflow.com/questions/18939484/matplotlib-subplot-that-takes-the-space-of-two-plots
+# https://stackoverflow.com/questions/34799488/how-to-manually-position-one-subplot-graph-in-matplotlib-pyplot
 
 # Modules
 import numpy as np
@@ -28,6 +35,9 @@ import pyjags
 import scipy.io as sio
 import os
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from matplotlib import rc
+from scipy import stats
 import pyhddmjagsutils as phju
 
 ### Simulations ###
@@ -250,3 +260,95 @@ phju.recovery(samples['CPPnoise'], genparam['CPPnoise'])
 plt.title('Recovery of the noise in the observed CPP slope')
 plt.savefig('figures/CPPnoise_recovery_simpleCPP.png', format='png', bbox_inches="tight")
 
+
+# Recovery plots nicely formatting for tutorial
+rc('font', **{'family':'serif','serif':['Palatino']})
+rc('text', usetex=True) #sudo apt install texlive-latex-extra cm-super dvipng
+
+
+def recoverysub(possamps, truevals, ax):  # Parameter recovery subplots
+    """Plots true parameters versus 99% and 95% credible intervals of recovered
+    parameters. Also plotted are the median (circles) and mean (stars) of the posterior
+    distributions.
+
+    Parameters
+    ----------
+    possamps : ndarray of posterior chains where the last dimension is the
+    number of chains, the second to last dimension is the number of samples in
+    each chain, all other dimensions must match the dimensions of truevals
+
+    truevals : ndarray of true parameter values
+    """
+
+    # Number of chains
+    nchains = possamps.shape[-1]
+
+    # Number of samples per chain
+    nsamps = possamps.shape[-2]
+
+    # Number of variables to plot
+    nvars = np.prod(possamps.shape[0:-2])
+
+    # Reshape data
+    alldata = np.reshape(possamps, (nvars, nchains, nsamps))
+    alldata = np.reshape(alldata, (nvars, nchains * nsamps))
+    truevals = np.reshape(truevals, (nvars))
+
+    # Plot properties
+    LineWidths = np.array([2, 5])
+    teal = np.array([0, .7, .7])
+    blue = np.array([0, 0, 1])
+    orange = np.array([1, .3, 0])
+    Colors = [teal, blue]
+
+    for v in range(0, nvars):
+        # Compute percentiles
+        bounds = stats.scoreatpercentile(alldata[v, :], (.5, 2.5, 97.5, 99.5))
+        for b in range(0, 2):
+            # Plot credible intervals
+            credint = np.ones(100) * truevals[v]
+            y = np.linspace(bounds[b], bounds[-1 - b], 100)
+            lines = ax.plot(credint, y, color=Colors[b], linewidth=LineWidths[b])
+            if b == 1:
+                # Mark median
+                mmedian = ax.plot(truevals[v], np.median(alldata[v, :]), 'o', markersize=10, color=[0., 0., 0.])
+                # Mark mean
+                mmean = ax.plot(truevals[v], np.mean(alldata[v, :]), '*', markersize=10, color=teal)
+    # Plot line y = x
+    tempx = np.linspace(np.min(truevals), np.max(
+        truevals), num=100)
+    recoverline = ax.plot(tempx, tempx, linewidth=3, color=orange)
+
+
+
+fontsize = 12
+
+fig = plt.figure(figsize=(9,10),dpi=300)
+gs = gridspec.GridSpec(3, 2)
+
+ax1 = plt.subplot(gs[0, 0:2])
+recoverysub(samples['delta'], genparam['delta'],ax1)
+ax1.set_xlabel('Simulated $\\delta_{p}$ ($\\mu V$ / sec)', fontsize=fontsize)
+ax1.set_ylabel('Posterior of $\\delta_{p}$ ($\\mu V$ / sec)', fontsize=fontsize)
+
+ax2 = plt.subplot(gs[1, 0])
+recoverysub(samples['ndt'], genparam['ndt'],ax2)
+ax2.set_xlabel('Simulated $\\tau_{p}$ (secs)', fontsize=fontsize)
+ax2.set_ylabel('Posterior of $\\tau_{p}$ (secs)', fontsize=fontsize)
+
+ax3 = plt.subplot(gs[1, 1])
+recoverysub(samples['alpha'], genparam['alpha'],ax3)
+ax3.set_xlabel('Simulated $\\alpha_{p}$ ($\\mu V$)', fontsize=fontsize)
+ax3.set_ylabel('Posterior of $\\alpha_{p}$ ($\\mu V$)', fontsize=fontsize)
+
+ax4 = plt.subplot(gs[2, 0])
+recoverysub(samples['beta'], genparam['beta'],ax4)
+ax4.set_xlabel('Simulated $\\beta_{p}$ ($\\mu V$)', fontsize=fontsize)
+ax4.set_ylabel('Posterior of $\\beta_{p}$ ($\\mu V$)', fontsize=fontsize)
+
+ax5 = plt.subplot(gs[2, 1])
+recoverysub(samples['CPPnoise'], genparam['CPPnoise'],ax5)
+ax5.set_xlabel('Simulated $\\sigma_{p}$ ($\\mu V$)', fontsize=fontsize)
+ax5.set_ylabel('Posterior of $\\sigma_{p}$ ($\\mu V$)', fontsize=fontsize)
+
+plt.savefig('figures/All_recovery_simpleCPP.png', dpi=300, format='png', bbox_inches="tight")

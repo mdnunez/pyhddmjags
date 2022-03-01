@@ -22,6 +22,7 @@
 # 06/29/20      Michael Nunez                             Original code
 # 12/04/20      Michael Nunez              Update explanation of summary output
 # 01/14/21      Michael Nunez             Add simuldiff2ndt() and flipstanout()
+# 28-Feb-22     Michael Nunez             Simulate diffusion model directly
 
 # Modules
 import numpy as np
@@ -35,7 +36,98 @@ import matplotlib.pyplot as plt
 
 ### Definitions ###
 
-# Simulate diffusion models
+
+# Simulate diffusion models slowly with intrinsic trial-to-trial variability in parameters
+def simul_ratcliff_slow(N=100, Alpha=1, Tau=.4, Nu=1, Beta=.5, rangeTau=0, rangeBeta=0, Eta=.3, Varsigma=1, nsteps=300, step_length=.01):
+    """
+    SIMUL_RATCLIFF_SLOW  Generates data according to a drift diffusion model with optional trial-to-trial variability
+
+    Parameters
+    ----------
+    N: a integer denoting the size of the output vector
+    (defaults to 100 experimental trials)
+
+    Alpha: the mean boundary separation across trials  in evidence units
+    (defaults to 1 evidence unit)
+
+    Tau: the mean non-decision time across trials in seconds
+    (defaults to .4 seconds)
+
+    Nu: the mean drift rate across trials in evidence units per second
+    (defaults to 1 evidence units per second, restricted to -5 to 5 units)
+
+    Beta: the initial bias in the evidence process for choice A as a proportion of boundary Alpha
+    (defaults to .5 or 50% of total evidence units given by Alpha)
+
+    rangeTau: Non-decision time across trials is generated from a uniform
+    distribution of Tau - rangeTau/2 to  Tau + rangeTau/2 across trials
+    (defaults to 0 seconds)
+
+    rangeZeta: Bias across trials is generated from a uniform distribution
+    of Zeta - rangeZeta/2 to Zeta + rangeZeta/2 across trials
+    (defaults to 0 evidence units)
+
+    Eta: Standard deviation of the drift rate across trials
+    (defaults to 3 evidence units per second, restricted to less than 3 evidence units)
+
+    Varsigma: The diffusion coefficient, the standard deviation of the
+    evidence accumulation process within one trial. It is recommended that
+    this parameter be kept fixed unless you have reason to explore this parameter
+    (defaults to 1 evidence unit per second)
+
+    Returns
+    -------
+    Numpy array with reaction times (in seconds) multiplied by the response vector
+    such that negative reaction times encode response B and positive reaction times
+    encode response A 
+    """
+
+    if (Nu < -5) or (Nu > 5):
+        Nu = np.sign(Nu)*5
+        warnings.warn('Nu is not in the range [-5 5], bounding drift rate to %.1f...' % (Nu))
+
+    if (Eta > 3):
+        warning.warn('Standard deviation of drift rate is out of bounds, bounding drift rate to 3')
+        eta = 3
+
+    if (Eta == 0):
+        Eta = 1e-16
+
+    # Initialize output vectors
+    rts = np.zeros(N)
+    choice = np.zeros(N)
+
+    for n in range(0,N):
+        random_walk = np.empty(nsteps)
+        start_point = np.random.uniform(Beta - rangeBeta/2, 
+            Beta + rangeBeta/2)
+        ndt = np.random.uniform(Tau - rangeTau/2, Tau + rangeTau/2)
+        drift = stats.norm.rvs(loc=Nu, scale=Eta)
+        random_walk[0] = start_point*Alpha
+        for s in range(1,nsteps):
+            random_walk[s] = random_walk[s-1] + 
+                stats.norm.rvs(loc=drift*step_length, 
+                    scale=Varsigma*np.sqrt(step_length))
+            if random_walk[s] >= Alpha:
+                random_walk[s:] = Alpha
+                rts[n] = s*step_length + ndt
+                choice[n] = 1
+                break
+            elif random_walk[s] <= 0:
+                random_walk[s:] = 0
+                rts[n] = s*step_length + ndt
+                choice[n] = -1
+                break
+            elif s == (nsteps-1):
+                rts[n] = np.nan
+                choice[n] = np.nan
+                break
+    result = rts*choice
+    return result
+
+
+
+# Simulate diffusion models quickly with intrinsic trial-to-trial variability in parameters
 def simulratcliff(N=100,Alpha=1,Tau=.4,Nu=1,Beta=.5,rangeTau=0,rangeBeta=0,Eta=.3,Varsigma=1):
     """
     SIMULRATCLIFF  Generates data according to a drift diffusion model with optional trial-to-trial variability
