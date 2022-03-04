@@ -1,5 +1,5 @@
 # pyhddmjags
-#### (Repository version 0.6.0)
+#### (Repository version 0.6.1)
 Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS in Python
 
 **Authors: Michael D. Nunez from the Cognitive Sciences Department at the University of California, Irvine**
@@ -39,13 +39,16 @@ The script nolapse_test_pystan.py contains pystan and Stan code to find and reco
 
 pyhddmjags is licensed under the GNU General Public License v3.0 and written by Michael D. Nunez from the Cognitive Sciences Department at the University of California, Irvine.
 
+### Possible citation
+Nunez, M. D., Vandekerckhove, J., & Srinivasan, R. (2022). [A tutorial on fitting joint models of M/EEG and behavior to understand cognition.](https://psyarxiv.com/vf6t5) PsyArXiv. https://doi.org/10.31234/osf.io/vf6t5
+
 ### Usage examples
 
 Nunez, M. D., Gosai, A., Vandekerckhove, J., & Srinivasan, R. (2019).
 [The latency of a visual evoked potential tracks the onset of decision making.](https://sci-hub.st/https://www.sciencedirect.com/science/article/pii/S1053811919303386) NeuroImage. doi: 10.1016/j.neuroimage.2019.04.052
 (See repository [encodingN200](https://github.com/mdnunez/encodingN200) associated with this paper for specific pyjags examples.)
 
-Lui, K. K., Nunez, M. D., Cassidy, J. M., Vandekerckhove, J., Cramer, S. C., & Srinivasan, R. (2020).
+Lui, K. K., Nunez, M. D., Cassidy, J. M., Vandekerckhove, J., Cramer, S. C., & Srinivasan, R. (2021).
 [Timing of readiness potentials reflect a decision-making process in the human brain.](https://sci-hub.st/https://link.springer.com/article/10.1007/s42113-020-00097-5) Computational Brain & Behavior.
 (See repository [RPDecision](https://github.com/mdnunez/RPDecision) associated with this paper for a specific HDDM in JAGS using MATLAB.)
 
