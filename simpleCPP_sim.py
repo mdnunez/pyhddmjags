@@ -129,7 +129,7 @@ ax3.tick_params(axis='both', which='major', labelsize=font_size)
 
 ax4 = plt.subplot(gs[1, 1])
 sns.kdeplot(cpp_slopes, shade=True, color='green', bw_adjust=1, ax=ax4)
-ax4.set_xlabel('CPP slopes ($\\mu V$)', fontsize=font_size)
+ax4.set_xlabel('CPP slopes ($\\mu V$ / sec)', fontsize=font_size)
 ax4.set_ylabel('Density', fontsize=font_size)
 ax4.tick_params(axis='both', which='major', labelsize=font_size)
 
