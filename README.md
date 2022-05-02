@@ -41,7 +41,7 @@ conda activate mcmc
 
 ### License
 
-pyhddmjags is licensed under the GNU General Public License v3.0 and written by Michael D. Nunez from the Cognitive Sciences Department at the University of California, Irvine.
+pyhddmjags is licensed under the GNU General Public License v3.0 and written by Michael D. Nunez from the Psychological Methods group at the University of Amsterdam.
 
 ### Possible citation
 Nunez, M. D., Vandekerckhove, J., & Srinivasan, R. (2022). [A tutorial on fitting joint models of M/EEG and behavior to understand cognition.](https://psyarxiv.com/vf6t5) PsyArXiv. https://doi.org/10.31234/osf.io/vf6t5
