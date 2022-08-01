@@ -1,6 +1,6 @@
 # regression_test.py - Testing JAGS fits of HDDM models with participant-level regressors in JAGS using pyjags in Python 3
 #
-# Copyright (C) 2020 Michael D. Nunez, <mdnunez1@uci.edu>
+# Copyright (C) 2020 Michael D. Nunez, <m.d.nunez@uva.nl>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 # 06/30/20      Michael Nunez                       Fix regression simulation
 # 07/06/20      Michael Nunez                Add summary function for parameter estimates
 # 12/04/20      Michael Nunez               Call definitions from pyhddmjagsutils.py
+# 01/08/22      Michael Nunez      Change np.int() to int() based on new Deprication warning
 
 
 # Modules
@@ -97,7 +98,7 @@ if not os.path.exists('data/genparam_test3.mat'):
             mindwanderx = np.random.randint(low=0,high=2,size=ntrials)*2 -1
             mindwandert = np.random.uniform(low=0,high=2,size=ntrials) # Randomly distributed from 0 to 2 seconds
 
-            mindwander_trials = np.random.choice(ntrials, size=np.int(np.round(ntrials*(prob_lapse[p]/100))), replace=False)
+            mindwander_trials = np.random.choice(ntrials, size=int(np.round(ntrials*(prob_lapse[p]/100))), replace=False)
             tempx[mindwander_trials] = mindwanderx[mindwander_trials]
             tempt[mindwander_trials] = mindwandert[mindwander_trials]
             y[indextrack] = tempx*tempt

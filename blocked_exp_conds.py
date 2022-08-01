@@ -1,6 +1,6 @@
 # blocked_exp_conds.py - Code to fit a HDDM with fixed start point from a blocked condition experiment using JAGS in Python 3
 #
-# Copyright (C) 2021 Michael D. Nunez, <mdnunez1@uci.edu>
+# Copyright (C) 2021 Michael D. Nunez, <m.d.nunez@uva.nl>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

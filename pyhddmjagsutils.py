@@ -1,6 +1,6 @@
 # pyhddmjagsutils.py - Definitions for simulation, model diagnostics, and parameter recovery
 #
-# Copyright (C) 2021 Michael D. Nunez, <mdnunez1@uci.edu>
+# Copyright (C) 2021 Michael D. Nunez, <m.d.nunez@uva.nl>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -105,8 +105,7 @@ def simul_ratcliff_slow(N=100, Alpha=1, Tau=.4, Nu=1, Beta=.5, rangeTau=0, range
         drift = stats.norm.rvs(loc=Nu, scale=Eta)
         random_walk[0] = start_point*Alpha
         for s in range(1,nsteps):
-            random_walk[s] = random_walk[s-1] + 
-                stats.norm.rvs(loc=drift*step_length, 
+            random_walk[s] = random_walk[s-1] + stats.norm.rvs(loc=drift*step_length, 
                     scale=Varsigma*np.sqrt(step_length))
             if random_walk[s] >= Alpha:
                 random_walk[s:] = Alpha

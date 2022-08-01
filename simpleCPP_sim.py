@@ -1,7 +1,7 @@
 # simpleCPP_sim.py - Directly simulates a model that
 # assumes CPP slopes are generated from drift rates
 #
-# Copyright (C) 2022 Michael D. Nunez, <mdnunez1@uci.edu>
+# Copyright (C) 2022 Michael D. Nunez, <m.d.nunez@uva.nl>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

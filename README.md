@@ -1,5 +1,5 @@
 # pyhddmjags
-#### (Repository version 0.6.5)
+#### (Repository version 0.6.6)
 Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS in Python
 
 **Authors: Michael D. Nunez from the Psychological Methods group at the University of Amsterdam**
@@ -35,8 +35,15 @@ At the moment each script can be run individually to simulate from hierarchical 
 
 The script nolapse_test_pystan.py contains pystan and Stan code to find and recover parameters from the exact same HDDM written in JAGS within nolapse_test.py. Note that this script will not work with the newest versions of pystan (pystan 3). One solution is to create a Python environment using `conda`:
 ```bash
-conda create -n mcmc python=3 numpy scipy pystan==2.19 pyjags
+conda create -n mcmc python=3 numpy scipy pystan==2.19
 conda activate mcmc
+```
+
+Note that you may need or want to create a separate environment for pyjags using `conda`:
+```bash
+conda create -n jags python=3 numpy scipy
+conda activate jags
+pip install pyjags
 ```
 
 ### License

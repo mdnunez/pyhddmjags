@@ -1,0 +1,37 @@
+
+model {
+    
+    ##########
+    #Simple NDDM parameter priors
+    ##########
+    for (p in 1:nparts) {
+    
+        #Boundary parameter (speed-accuracy tradeoff) per participant
+        alpha[p] ~ dnorm(1, pow(.5,-2))T(0, 3)
+
+        #Non-decision time per participant
+        ndt[p] ~ dnorm(.5, pow(.25,-2))T(0, 1)
+
+        #Start point bias towards choice A per participant
+        beta[p] ~ dnorm(.5, pow(.25,-2))T(0, 1)
+
+        #Drift rate to choice A per participant
+        delta[p] ~ dnorm(0, pow(2, -2))
+
+        #Noise in observed EEG measure, the CentroParietal Positivity (CPP) slope per participant
+        CPPnoise[p] ~ dnorm(1, pow(.5,-2))T(0, 3)
+
+    }
+
+    ##########
+    # Wiener likelihood
+    for (i in 1:N) {
+
+        # Observations of accuracy*RT for DDM process of rightward/leftward RT
+        y[i] ~ dwiener(alpha[participant[i]], ndt[participant[i]], beta[participant[i]], delta[participant[i]])
+
+        # Observations of CentroParietal Positivity (CPP) slope per trial
+        CPP[i] ~ dnorm(delta[participant[i]],pow(CPPnoise[participant[i]],-2))
+
+    }
+}

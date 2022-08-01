@@ -1,6 +1,6 @@
-# nolapse_test_pystan.py - Testing fits of HDDM models without lapse process in Stan using pystan in Python 3
+# single_trial_regress_pystan.py - Testing fits of HDDM models without lapse process in Stan using pystan in Python 3
 #
-# Copyright (C) 2021 Michael D. Nunez, <m.d.nunez@uva.nl>
+# Copyright (C) 2022 Michael D. Nunez, <m.d.nunez@uva.nl>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #
 # Date            Programmers                         Descriptions of Change
 # ====         ================                       ======================
-# 02/15/21      Michael Nunez                       Converted from nolapse_test.py
+# 01/15/21      Michael Nunez                       Converted from nolapse_test.py
 
 
 # Modules
