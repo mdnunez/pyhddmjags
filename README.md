@@ -1,5 +1,5 @@
 # pyhddmjags
-#### (Repository version 0.6.6)
+#### (Repository version 0.6.7)
 Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS in Python
 
 **Authors: Michael D. Nunez from the Psychological Methods group at the University of Amsterdam**
@@ -51,7 +51,7 @@ pip install pyjags
 pyhddmjags is licensed under the GNU General Public License v3.0 and written by Michael D. Nunez from the Psychological Methods group at the University of Amsterdam.
 
 ### Possible citation
-Nunez, M. D., Vandekerckhove, J., & Srinivasan, R. (2022). [A tutorial on fitting joint models of M/EEG and behavior to understand cognition.](https://psyarxiv.com/vf6t5) PsyArXiv. https://doi.org/10.31234/osf.io/vf6t5
+Nunez, M. D., Fernandez, K., Srinivasan, R., & Vandekerckhove, J. (2023). [A tutorial on fitting joint models of M/EEG and behavior to understand cognition.](https://psyarxiv.com/vf6t5) PsyArXiv. https://doi.org/10.31234/osf.io/vf6t5
 
 ### Usage examples
 
