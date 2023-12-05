@@ -1,0 +1,49 @@
+
+model {
+
+    ##########
+    #Participant- and condition-level parameter priors, this is not a hierarchical model
+    ##########
+    for (p in 1:nparts) {
+
+        for (c in 1:nconds) {
+
+            #Boundary parameter per participant and condition
+            alpha[p, c] ~ dnorm(1, pow(.25,-2))T(0, 3)
+
+            #Non-decision time per participant and condition
+            ndt[p, c] ~ dnorm(.5, pow(.25,-2))T(0, 1)
+
+            #Intercept parameter
+            xi_0[p,c] ~ dnorm(0, pow(2, -2))
+        }
+
+        #Slope difference between conditions 1 and 3 to calculate BFs using Savage-Dickey
+        xi_1_cond1_3_diff[p] ~ dnorm(0, pow(2, -2))
+
+        #Slope difference between conditions 1 and 2 to calcualte BFs using Savage-Dickey
+        xi_1_cond1_2_diff[p] ~ dnorm(0, pow(2, -2))
+
+        #Condition 2 slope, note that all three condition xi_1 will not have the same prior variances
+        xi_1_cond2[p] ~ dnorm(0, pow(2, -2))
+
+        #Condition 1 slope
+        xi_1[p, 1] = xi_1_cond1_2_diff[p] + xi_1_cond2[p]
+
+        #Condition 2 slope
+        xi_1[p, 2] = xi_1_cond2[p]
+
+        #Condition 3 slope
+        xi_1[p, 3] = xi_1_cond1_2_diff[p] + xi_1_cond2[p] - xi_1_cond1_3_diff[p]
+    }
+
+    ##########
+    # Wiener likelihood with single-trial drift rate described by single-trial CPP amplitudes
+    for (i in 1:N) {
+
+        # Observations of accuracy*RT for DDM process for correct/incorrect
+        y[i] ~ dwiener(alpha[participant[i],condition[i]], ndt[participant[i],condition[i]], .5, 
+                       xi_0[participant[i],condition[i]] + xi_1[participant[i],condition[i]]*cpp[i])
+
+    }
+}
