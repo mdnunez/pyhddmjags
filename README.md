@@ -41,7 +41,7 @@ conda activate mcmc
 
 Note that you may need or want to create a separate environment for pyjags using `conda`:
 ```bash
-conda create -n jags python=3 numpy scipy
+conda create -n jags python=3.8 numpy
 conda activate jags
 pip install pyjags
 ```
