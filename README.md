@@ -1,8 +1,11 @@
 # pyhddmjags
-#### (Repository version 0.7.0)
+#### (Repository version 0.7.1)
 Repository for example Hierarchical Drift Diffusion Model (HDDM) code using JAGS in Python
 
 **Authors: Michael D. Nunez from the Psychological Methods group at the University of Amsterdam**
+
+### Possible citation
+Nunez, M. D., Fernandez, K., Srinivasan, R., & Vandekerckhove, J. (2024). [A tutorial on fitting joint models of M/EEG and behavior to understand cognition.](https://link.springer.com/article/10.3758/s13428-023-02331-x) Behavior Research Methods. https://doi.org/10.3758/s13428-023-02331-x
 
 ### Prerequisites
 
@@ -18,9 +21,15 @@ For these next install steps in Ubuntu, see jags_wiener_ubuntu.md in this reposi
 ```bash
 pip install pyjags
 ```
-Optional:
+See also yaml/pyjags.yml
 
-[pystan 2](https://pystan.readthedocs.io)
+#### Optional Stan + PyStan
+
+The newest version of PyStan was PyStan 3, but I didn't find PyStan 3 as easy to use with custom diagnostic and plotting scripts as PyStan 2.
+
+[Here are the docs for PyStan 2](https://pystan2.readthedocs.io)
+
+See also yaml/pystan.yml
 
 
 ### Downloading
@@ -49,9 +58,6 @@ pip install pyjags
 ### License
 
 pyhddmjags is licensed under the GNU General Public License v3.0 and written by Michael D. Nunez from the Psychological Methods group at the University of Amsterdam.
-
-### Possible citation
-Nunez, M. D., Fernandez, K., Srinivasan, R., & Vandekerckhove, J. (2023). [A tutorial on fitting joint models of M/EEG and behavior to understand cognition.](https://psyarxiv.com/vf6t5) PsyArXiv. https://doi.org/10.31234/osf.io/vf6t5
 
 ### Usage examples
 
